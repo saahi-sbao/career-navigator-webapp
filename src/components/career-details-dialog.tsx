@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import type { CareerField } from './career-card';
-import { BrainCircuit, Book } from 'lucide-react';
+import { BrainCircuit, Book, Briefcase } from 'lucide-react';
 
 type CareerDetailsDialogProps = {
   field: CareerField | null;
@@ -45,6 +45,18 @@ export default function CareerDetailsDialog({ field, isOpen, onClose }: CareerDe
             <div className="flex flex-wrap gap-2">
               {field.mainSubjects.map(subject => (
                 <Badge key={subject} variant="secondary">{subject}</Badge>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-lg mb-3 text-foreground flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-primary" />
+                Suggested Careers
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {field.careers.map(career => (
+                <Badge key={career} variant="outline">{career}</Badge>
               ))}
             </div>
           </div>

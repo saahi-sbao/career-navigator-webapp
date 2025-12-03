@@ -24,6 +24,7 @@ export type CareerField = {
   details: string;
   mainSubjects: string[];
   dominantIntelligence: string;
+  careers: string[];
 };
 
 type CareerCardProps = {
