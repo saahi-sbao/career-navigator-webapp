@@ -26,7 +26,7 @@ export default function Header() {
               href="/#career-fields"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              Pathways
+              Careers
             </Link>
              <Link
               href="/resources"

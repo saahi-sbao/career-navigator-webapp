@@ -10,8 +10,6 @@ import { useState, useEffect } from 'react';
 import StartupAnimation from '@/components/startup-animation';
 import { Inter as FontSans } from "next/font/google"
 import { cn } from "@/lib/utils"
-import Footer from '@/components/footer';
-
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -69,7 +67,6 @@ export default function RootLayout({
             <div className="relative flex min-h-screen flex-col bg-background">
               {children}
             </div>
-            <Footer />
             <Chatbot />
           </FirebaseClientProvider>
           <Toaster />
