@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useTransition } from 'react';
@@ -11,11 +12,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageSquare, Mic, MicOff, Send, Loader2, Volume2, VolumeX, X } from 'lucide-react';
+import { Bot, Mic, MicOff, Send, Loader2, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { generateChatResponseAction, generateAudioAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from './ui/avatar';
+import VoiceSelector from './voice-selector';
 
 export type ChatMessage = {
   role: 'user' | 'model';
@@ -30,6 +32,7 @@ export default function Chatbot() {
   const [isListening, setIsListening] = useState(false);
   const [isTtsEnabled, setIsTtsEnabled] = useState(true);
   const [audioQueue, setAudioQueue] = useState<HTMLAudioElement[]>([]);
+  const [voice, setVoice] = useState('en-US-Standard-E');
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -44,14 +47,17 @@ export default function Chatbot() {
 
   useEffect(() => {
     // Play audio from the queue
-    if (audioQueue.length > 0) {
+    if (audioQueue.length > 0 && isTtsEnabled) {
       const audio = audioQueue[0];
       audio.play();
       audio.onended = () => {
         setAudioQueue(prev => prev.slice(1));
       };
+    } else if (!isTtsEnabled) {
+      // Clear queue if TTS is disabled
+      setAudioQueue([]);
     }
-  }, [audioQueue]);
+  }, [audioQueue, isTtsEnabled]);
 
   const handleSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -106,7 +112,7 @@ export default function Chatbot() {
         setMessages(prev => [...prev, { role: 'model', content: result.response as string }]);
         
         if (isTtsEnabled) {
-          const audioResult = await generateAudioAction({ text: result.response as string });
+          const audioResult = await generateAudioAction({ text: result.response as string, voiceName: voice });
           if (audioResult.success && audioResult.audio) {
             const audio = new Audio(audioResult.audio);
             setAudioQueue(prev => [...prev, audio]);
@@ -126,21 +132,24 @@ export default function Chatbot() {
         className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
         onClick={() => setIsOpen(true)}
       >
-        <MessageSquare className="h-8 w-8" />
+        <Bot className="h-8 w-8" />
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px] md:max-w-[600px] h-[80vh] flex flex-col p-0">
-          <DialogHeader className="p-6 pb-2">
+          <DialogHeader className="p-6 pb-2 border-b">
             <DialogTitle className="flex justify-between items-center">
               Career Guidance Assistant
-              <Button variant="ghost" size="icon" onClick={() => setIsTtsEnabled(p => !p)}>
-                {isTtsEnabled ? <Volume2 /> : <VolumeX />}
-              </Button>
+              <div className="flex items-center gap-2">
+                <VoiceSelector selectedVoice={voice} onVoiceChange={setVoice} />
+                <Button variant="ghost" size="icon" onClick={() => setIsTtsEnabled(p => !p)}>
+                  {isTtsEnabled ? <Volume2 /> : <VolumeX />}
+                </Button>
+              </div>
             </DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex-grow px-6" ref={scrollAreaRef}>
-            <div className="space-y-4 pr-4">
+            <div className="space-y-4 pr-4 py-4">
               {messages.map((message, index) => (
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>
                   {message.role === 'model' && (
@@ -194,7 +203,7 @@ export default function Chatbot() {
                 onKeyDown={e => e.key === 'Enter' && handleSend()}
                 disabled={isPending}
               />
-              <Button onClick={() => handleSend()} disabled={isPending}>
+              <Button onClick={() => handleSend()} disabled={isPending || !input}>
                 {isPending ? <Loader2 className="animate-spin" /> : <Send />}
               </Button>
             </div>

@@ -1,3 +1,4 @@
+
 'use server';
 
 import { getPersonalizedCareerSuggestions } from '@/ai/flows/personalized-career-suggestions';
@@ -47,12 +48,13 @@ export async function generateChatResponseAction(data: { messages: ChatMessage[]
 
 const TtsSchema = z.object({
   text: z.string(),
+  voiceName: z.string().optional(),
 });
 
-export async function generateAudioAction(data: { text: string }) {
+export async function generateAudioAction(data: { text: string, voiceName?: string }) {
   try {
     const validatedData = TtsSchema.parse(data);
-    const result = await generateAudio({ text: validatedData.text });
+    const result = await generateAudio({ text: validatedData.text, voiceName: validatedData.voiceName });
     return { success: true, audio: result.audio };
   } catch (error) {
     console.error('Error in audio generation action:', error);
