@@ -64,7 +64,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            <div className="relative flex min-h-screen flex-col bg-background">
+            <div className="relative flex min-h-screen flex-col bg-background/80 backdrop-blur-sm">
               {children}
             </div>
             <Chatbot />
