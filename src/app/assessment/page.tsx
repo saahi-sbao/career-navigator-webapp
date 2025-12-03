@@ -274,7 +274,7 @@ export default function AssessmentPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-10 flex justify-center items-start">
         {renderContent()}
@@ -300,15 +300,18 @@ const InfoPage = ({ onStart, initialInfo, error }: { onStart: (info: StudentInfo
     }
 
     return (
-        <Card className="w-full max-w-2xl text-center">
-            <CardHeader>
+        <Card className="w-full max-w-2xl">
+            <CardHeader className="text-center">
                 <CardTitle className="text-3xl font-extrabold">Career Guidance Assessment</CardTitle>
+                <CardDescription className="text-xl pt-2">
+                    Discover your strengths and the career path that's right for you.
+                </CardDescription>
             </CardHeader>
             <CardContent>
-                <p className="text-muted-foreground mb-8">
-                Enter your details below to begin the Multiple Intelligence (MI) quiz. This will help us recommend a suitable career pathway for you.
+                <p className="text-muted-foreground mb-8 text-center">
+                    Enter your details below to begin the Multiple Intelligence (MI) quiz. This will help us recommend a suitable career pathway.
                 </p>
-                <form onSubmit={handleSubmit} className="space-y-4 text-left">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <Label htmlFor="student-name">Full Name</Label>
                         <Input id="student-name" name="name" value={info.name} onChange={handleChange} placeholder="e.g., John Doe" required />
@@ -338,7 +341,10 @@ const Assessment = ({ question, index, total, answer, onAnswer, onNavigate, onSu
   return (
     <Card className="w-full max-w-3xl">
       <CardHeader>
-        <CardTitle>Question {index + 1} of {total}</CardTitle>
+        <div className="flex justify-between items-center">
+            <CardTitle>Question {index + 1}</CardTitle>
+            <span className="text-sm text-muted-foreground">{index + 1} of {total}</span>
+        </div>
         <p className="text-xl pt-4 font-semibold text-foreground">{question.text}</p>
       </CardHeader>
       <CardContent>
@@ -494,16 +500,16 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                 <CardDescription>Generated on {new Date(timestamp).toLocaleDateString()}</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="border rounded-xl p-4 mb-6">
+                <div className="border rounded-lg p-4 mb-6">
                     <h3 className="font-bold text-lg mb-2">Student Summary</h3>
                     <p><strong>Name:</strong> {info.name}</p>
                     <p><strong>Age:</strong> {info.age}</p>
                     <p><strong>School:</strong> {info.school}</p>
                 </div>
 
-                <div className="border bg-primary/5 border-primary/20 text-primary-foreground rounded-xl p-6 mb-8">
+                <div className="border bg-primary/5 border-primary/20 text-primary-foreground rounded-lg p-6 mb-8 shadow-sm">
                      <h3 className="text-xl font-bold text-primary mb-2">Your Recommended Pathway is:</h3>
-                     <h1 className="text-4xl font-extrabold text-primary">{recommendation.pathway.name} Pathway</h1>
+                     <h2 className="text-4xl font-extrabold text-primary">{recommendation.pathway.name} Pathway</h2>
                      <p className="mt-2 text-lg">Match Confidence: <strong>{recommendation.confidence}%</strong></p>
                      <p className="mt-4 text-muted-foreground">{recommendation.pathway.description}.</p>
 
@@ -514,7 +520,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                      <div className="mt-4">
                         <h4 className="font-semibold">Suggested Careers:</h4>
                         <div className="flex flex-wrap gap-2 mt-2">
-                            {recommendation.pathway.careers.map(c => <span key={c} className="bg-primary/20 text-primary-dark font-medium px-3 py-1 rounded-full text-sm">{c}</span>)}
+                            {recommendation.pathway.careers.map(c => <span key={c} className="bg-primary/20 text-primary font-medium px-3 py-1 rounded-full text-sm">{c}</span>)}
                         </div>
                      </div>
                 </div>
@@ -530,14 +536,14 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                                         <span className="font-semibold">{miDisplay}</span>
                                         <span className="text-sm font-bold text-primary">{score}%</span>
                                     </div>
-                                    <Progress value={score} className="h-3" />
-                                d</div>
+                                    <Progress value={score} className="h-2" />
+                                </div>
                             )
                         })}
                     </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t flex justify-center gap-4">
+                <div className="mt-8 pt-6 border-t flex flex-wrap justify-center gap-4">
                     <Button onClick={downloadPDF}><Download className="mr-2" /> Download PDF Report</Button>
                     <Button variant="secondary" onClick={onRestart}><Redo className="mr-2" /> Start New Assessment</Button>
                 </div>

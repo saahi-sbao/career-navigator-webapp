@@ -1,27 +1,27 @@
 import Header from '@/components/header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-10">
-        <Card className="w-full max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-3xl font-extrabold">About This System</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-muted-foreground">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6 text-center">About The Career Guidance System</h1>
+          <div className="space-y-6 text-lg text-muted-foreground">
             <p>
-              This Career Guidance System is designed to assist students in Kenya's Competency-Based Curriculum (CBE) in discovering their interests and aptitudes.
+              This Career Guidance System is a modern tool designed to assist students within Kenya's Competency-Based Curriculum (CBE) framework. Our primary goal is to empower learners to discover their innate interests and aptitudes, providing a clear and insightful path toward a fulfilling career.
             </p>
             <p>
-              By leveraging established theories like Howard Gardner's Multiple Intelligences, this tool provides a simple yet effective way for students to gain insight into their strengths. The goal is to offer personalized career pathway suggestions that align with their natural talents.
+              By leveraging established educational theories like Howard Gardner's Multiple Intelligences, our system offers a simple yet scientifically-grounded assessment. The results provide students with personalized career pathway suggestions that are carefully aligned with their natural talents and strengths.
             </p>
             <p>
-              Whether you are a student exploring future options, a teacher guiding your class, or a parent supporting your child, this system serves as a starting point for important career conversations.
+              Whether you are a student exploring the exciting possibilities that lie ahead, a teacher guiding your class toward their future, or a parent supporting your child's journey, this system serves as an invaluable starting point for meaningful career conversations and planning.
             </p>
-          </CardContent>
-        </Card>
+            <p className="font-semibold text-foreground">
+              Our mission is to illuminate the path for every student, helping them navigate their educational journey with confidence and purpose.
+            </p>
+          </div>
+        </div>
       </main>
     </div>
   );

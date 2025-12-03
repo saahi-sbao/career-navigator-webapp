@@ -1,7 +1,6 @@
 
 'use client';
 
-import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
@@ -9,11 +8,14 @@ import { ThemeProvider } from '@/components/theme-provider';
 import Chatbot from '@/components/chatbot';
 import { useState, useEffect } from 'react';
 import StartupAnimation from '@/components/startup-animation';
+import { Inter as FontSans } from "next/font/google"
+import { cn } from "@/lib/utils"
 
-const metadata: Metadata = {
-  title: 'Career Navigator',
-  description: 'Navigate your career path with AI-powered suggestions.',
-};
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 export default function RootLayout({
   children,
@@ -33,7 +35,10 @@ export default function RootLayout({
   if (showAnimation) {
     return (
        <html lang="en" suppressHydrationWarning>
-         <body>
+         <body className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -49,15 +54,10 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="font-body antialiased bg-background">
+      <body className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -65,7 +65,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            {children}
+            <div className="relative flex min-h-screen flex-col bg-background">
+              {children}
+            </div>
             <Chatbot />
           </FirebaseClientProvider>
           <Toaster />

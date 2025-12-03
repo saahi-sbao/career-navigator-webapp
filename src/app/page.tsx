@@ -1,3 +1,4 @@
+
 import Header from '@/components/header';
 import CareerGrid from '@/components/career-grid';
 import Suggestions from '@/components/suggestions';
@@ -8,30 +9,37 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="p-4 sm:p-8 min-h-screen flex flex-col items-center">
-        <div className="bg-card p-6 sm:p-10 rounded-xl shadow-2xl max-w-4xl w-full">
-          <div className="flex justify-between items-start mb-6">
-              <div>
-                  <h1 className="text-4xl font-extrabold text-primary mb-2">
-                  Career Builder & Explorer (CBE)
-                  </h1>
-                  <p className="text-sm font-medium text-muted-foreground">
-                  Navigate your career path. Select your interests to get AI-powered suggestions.
-                  </p>
-              </div>
+      <main className="flex-1">
+        <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
+          <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold">
+              Discover Your Future Career
+            </h1>
+            <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+              Explore your interests and aptitudes with our AI-powered assessment to find the perfect career pathway for you in the Kenyan CBE curriculum.
+            </p>
+            <div className="space-x-4">
               <Button asChild size="lg">
                   <Link href="/assessment">Start Assessment</Link>
               </Button>
+            </div>
           </div>
-
-
-          <h2 className="text-2xl font-semibold text-card-foreground border-b pb-2 mb-6">
-            Explore Career Fields
-          </h2>
-
+        </section>
+        <section
+          id="career-fields"
+          className="container space-y-6 bg-slate-50/50 dark:bg-transparent py-8 md:py-12 lg:py-24 rounded-t-2xl"
+        >
+          <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+            <h2 className="text-3xl leading-[1.1] sm:text-3xl md:text-5xl font-bold">
+              Explore Career Fields
+            </h2>
+            <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+              Select the fields you are interested in to get personalized suggestions.
+            </p>
+          </div>
           <CareerGrid />
           <Suggestions />
-        </div>
+        </section>
       </main>
     </>
   );

@@ -10,11 +10,12 @@ export default function SupportPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-10">
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
+        <div className="mx-auto max-w-2xl">
+        <Card>
+          <CardHeader className="text-center">
             <CardTitle className="text-3xl font-extrabold">Contact Support</CardTitle>
             <CardDescription>
-              If you have questions or need technical assistance with the Career Guidance System, please fill out the form below.
+              Have questions or need technical help? Fill out the form below.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -31,10 +32,11 @@ export default function SupportPage() {
                 <Label htmlFor="message">Your Message</Label>
                 <Textarea id="message" placeholder="Please describe your question or issue in detail." className="min-h-[150px]" />
               </div>
-              <Button type="submit" className="w-full text-lg py-6">Submit Inquiry</Button>
+              <Button type="submit" className="w-full" size="lg">Submit Inquiry</Button>
             </form>
           </CardContent>
         </Card>
+        </div>
       </main>
     </div>
   );

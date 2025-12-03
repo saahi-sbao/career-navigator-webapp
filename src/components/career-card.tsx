@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { cn } from '@/lib/utils';
 import { Check, Plus, Loader2, BookOpen } from 'lucide-react';
@@ -15,12 +15,6 @@ export type CareerField = {
   name: string;
   description: string;
   icon: string;
-  theme: {
-    bg: string;
-    border: string;
-    text: string;
-    iconText: string;
-  };
   details: string;
   mainSubjects: string[];
   dominantIntelligence: string;
@@ -86,35 +80,35 @@ export default function CareerCard({ field, onOpenDetails }: CareerCardProps) {
   return (
     <Card
       className={cn(
-        'transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 flex flex-col overflow-hidden p-5 shadow-md relative',
-        field.theme.bg,
-        field.theme.border,
-        isSelected && 'ring-4 ring-primary'
+        'transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 group relative cursor-pointer',
+        isSelected && 'ring-2 ring-primary'
       )}
       onClick={onOpenDetails}
     >
-      <div className="flex items-center space-x-4">
-        <span className={cn('text-4xl', field.theme.iconText)}>{field.icon}</span>
-        <div>
-          <p className={cn('font-bold text-lg', field.theme.text)}>{field.name}</p>
-          <p className="text-sm text-muted-foreground">{field.description}</p>
-        </div>
-      </div>
-      <div className="absolute top-3 right-3 flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-accent/50" onClick={onOpenDetails}>
-            <BookOpen className="h-4 w-4" />
-            <span className="sr-only">View Details</span>
-        </Button>
-        <Button
-            variant={isSelected ? 'secondary' : 'outline'}
-            size="icon"
-            className="h-8 w-8"
-            onClick={handleSelectToggle}
-            disabled={isLoading}
-        >
-            {isLoading ? <Loader2 className="animate-spin" /> : isSelected ? <Check /> : <Plus />}
-            <span className="sr-only">{isSelected ? 'Remove interest' : 'Add interest'}</span>
-        </Button>
+        <CardContent className="p-6">
+            <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                    <h3 className="text-lg font-bold">{field.name}</h3>
+                    <p className="text-sm text-muted-foreground">{field.description}</p>
+                </div>
+                <div className="text-3xl ml-4 opacity-80 group-hover:opacity-100 transition-opacity">{field.icon}</div>
+            </div>
+        </CardContent>
+        <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-accent/50" onClick={onOpenDetails}>
+                <BookOpen className="h-4 w-4" />
+                <span className="sr-only">View Details</span>
+            </Button>
+            <Button
+                variant={isSelected ? 'secondary' : 'outline'}
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleSelectToggle}
+                disabled={isLoading}
+            >
+                {isLoading ? <Loader2 className="animate-spin" /> : isSelected ? <Check /> : <Plus />}
+                <span className="sr-only">{isSelected ? 'Remove interest' : 'Add interest'}</span>
+            </Button>
       </div>
     </Card>
   );

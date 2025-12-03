@@ -25,18 +25,13 @@ export default function CareerDetailsDialog({ field, isOpen, onClose }: CareerDe
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-2xl font-bold">
-            <span className={field.theme.iconText}>{field.icon}</span>
-            <span className={field.theme.text}>{field.name}</span>
+            <span className="text-4xl">{field.icon}</span>
+            <span>{field.name}</span>
           </DialogTitle>
-          <DialogDescription className="pt-2">{field.description}</DialogDescription>
+          <DialogDescription className="pt-2">{field.details}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          <div>
-            <h3 className="font-semibold text-lg mb-2 text-foreground">What it Encompasses</h3>
-            <p className="text-muted-foreground">{field.details}</p>
-          </div>
-
           <div>
             <h3 className="font-semibold text-lg mb-3 text-foreground flex items-center gap-2">
               <Book className="h-5 w-5 text-primary" />
