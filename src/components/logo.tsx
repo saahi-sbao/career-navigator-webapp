@@ -6,8 +6,8 @@ export default function Logo() {
       <Image
         src="https://storage.googleapis.com/project-spark-3c51e.appspot.com/generated/v81dkbn3g0l2t75t707a3l9j1/image_0.png"
         alt="Career Guidance AI System Logo"
-        width={50}
-        height={50}
+        width={80}
+        height={80}
         className="rounded-full"
       />
     </div>
