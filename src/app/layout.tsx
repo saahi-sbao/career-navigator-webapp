@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import { ThemeProvider } from '@/components/theme-provider';
 import Header from '@/components/header';
+import Chatbot from '@/components/chatbot';
 
 export const metadata: Metadata = {
   title: 'Career Navigator',
@@ -33,8 +34,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            <Header />
             {children}
+            <Chatbot />
           </FirebaseClientProvider>
           <Toaster />
         </ThemeProvider>
