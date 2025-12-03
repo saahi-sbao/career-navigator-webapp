@@ -1,6 +1,8 @@
 import CareerGrid from '@/components/career-grid';
 import Suggestions from '@/components/suggestions';
 import AuthButton from '@/components/auth-button';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -15,6 +17,12 @@ export default function Home() {
         <p className="text-sm font-medium text-gray-500 mb-6">
           Navigate your career path with AI-powered suggestions.
         </p>
+
+        <div className="my-8 text-center">
+          <Button asChild size="lg">
+            <Link href="/assessment">Start Career Assessment</Link>
+          </Button>
+        </div>
 
         <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-6">
           Explore Career Fields
