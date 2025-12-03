@@ -16,13 +16,16 @@ import {
   signInWithPopup, 
   GoogleAuthProvider,
   signInWithPhoneNumber,
-  RecaptchaVerifier
+  RecaptchaVerifier,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Chrome } from "lucide-react"; // Using Chrome icon for Google
+
+type View = 'login' | 'forgotPassword';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -31,8 +34,10 @@ export default function LoginPage() {
   const [otp, setOtp] = useState('');
   const [confirmationResult, setConfirmationResult] = useState<any>(null);
   const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
+  const [view, setView] = useState<View>('login');
   
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
   const auth = useAuth();
@@ -47,7 +52,7 @@ export default function LoginPage() {
   
   // Setup recaptcha
   useEffect(() => {
-    if (!auth || typeof window === 'undefined' || (window as any).recaptchaVerifier) return;
+    if (view !== 'login' || loginMethod !== 'phone' || !auth || typeof window === 'undefined' || (window as any).recaptchaVerifier) return;
     try {
         (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
             'size': 'invisible',
@@ -58,11 +63,12 @@ export default function LoginPage() {
     } catch (e) {
         console.error("Error setting up recaptcha: ", e);
     }
-  }, [auth]);
+  }, [auth, view, loginMethod]);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     setError(null);
+    setMessage(null);
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
@@ -78,10 +84,12 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setMessage(null);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/');
-    } catch (error: any) {
+    } catch (error: any)
+      {
       setError(error.message);
     } finally {
       setIsLoading(false);
@@ -92,12 +100,14 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setMessage(null);
     const appVerifier = (window as any).recaptchaVerifier;
 
     try {
         const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
         setConfirmationResult(result);
-        setError("OTP has been sent to your phone.");
+        setMessage("OTP has been sent to your phone.");
+        setError(null);
     } catch (error: any) {
         setError(`Phone sign-in error: ${error.message}`);
     } finally {
@@ -109,6 +119,7 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setMessage(null);
 
     try {
         await confirmationResult.confirm(otp);
@@ -120,21 +131,52 @@ export default function LoginPage() {
     }
   }
 
+  const handlePasswordReset = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setMessage(null);
+    try {
+        await sendPasswordResetEmail(auth, email);
+        setMessage("Password reset link sent! Check your email inbox.");
+        setError(null);
+    } catch (error: any) {
+        setError(error.message);
+    } finally {
+        setIsLoading(false);
+    }
+  }
+
+
   if (user) {
     return null;
   }
 
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="mx-auto max-w-sm w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Choose your login method below
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
+  const renderContent = () => {
+    if (view === 'forgotPassword') {
+        return (
+            <form onSubmit={handlePasswordReset}>
+                <div className="grid gap-4">
+                    <CardDescription>
+                        Enter your email address to receive a password reset link.
+                    </CardDescription>
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? <Loader2 className="animate-spin" /> : 'Send Reset Link'}
+                    </Button>
+                    <Button variant="link" size="sm" onClick={() => setView('login')}>
+                        Back to Login
+                    </Button>
+                </div>
+            </form>
+        );
+    }
+
+    return (
+        <div className="grid gap-4">
             <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isLoading}>
               <Chrome className="mr-2 h-4 w-4" />
               Login with Google
@@ -159,7 +201,12 @@ export default function LoginPage() {
                     <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
+                    <div className="flex items-center">
+                        <Label htmlFor="password">Password</Label>
+                        <Button variant="link" size="sm" className="ml-auto inline-block text-xs underline" onClick={() => setView('forgotPassword')}>
+                            Forgot your password?
+                        </Button>
+                    </div>
                     <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
@@ -197,19 +244,35 @@ export default function LoginPage() {
                 setLoginMethod(loginMethod === 'email' ? 'phone' : 'email');
                 setConfirmationResult(null);
                 setError(null);
+                setMessage(null);
             }}>
               {loginMethod === 'email' ? 'Login with Phone Number' : 'Login with Email'}
             </Button>
-
-            {error && <p className="text-destructive text-sm">{error}</p>}
           </div>
+    );
+  }
 
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
-              Sign up
-            </Link>
-          </div>
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <Card className="mx-auto max-w-sm w-full">
+        <CardHeader>
+          <CardTitle className="text-2xl">{view === 'login' ? 'Login' : 'Reset Password'}</CardTitle>
+          {view === 'login' && <CardDescription>Choose your login method below</CardDescription>}
+        </CardHeader>
+        <CardContent>
+          {renderContent()}
+
+          {error && <p className="text-destructive text-sm mt-4">{error}</p>}
+          {message && <p className="text-green-600 text-sm mt-4">{message}</p>}
+
+          {view === 'login' && (
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" className="underline">
+                Sign up
+              </Link>
+            </div>
+          )}
         </CardContent>
       </Card>
       <div id="recaptcha-container"></div>
