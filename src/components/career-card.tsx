@@ -3,9 +3,12 @@
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { useUser } from '@/lib/auth';
+import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { cn } from '@/lib/utils';
 import { Check, Plus, Loader2 } from 'lucide-react';
+import { doc, setDoc, deleteDoc, collection } from 'firebase/firestore';
+import { useCollection } from '@/firebase';
+import { useEffect, useState } from 'react';
 
 export type CareerField = {
   name: string;
@@ -18,14 +21,41 @@ type CareerCardProps = {
 };
 
 export default function CareerCard({ field }: CareerCardProps) {
-  const { user, addInterest, isLoading } = useUser();
-  const isSelected = user?.interests.includes(field.name);
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSelect = () => {
-    if (!isSelected) {
-      addInterest(field.name);
+  const interestsCol = useMemoFirebase(
+    () => (user ? collection(firestore, `users/${user.uid}/careerInterests`) : null),
+    [user, firestore]
+  );
+  const { data: interests, isLoading: interestsLoading } = useCollection(interestsCol);
+
+  const isSelected = interests?.some(interest => interest.id === field.name);
+
+  const handleSelect = async () => {
+    if (!user || !firestore) return;
+    setIsProcessing(true);
+    const interestRef = doc(firestore, `users/${user.uid}/careerInterests`, field.name);
+    
+    try {
+      if (!isSelected) {
+        await setDoc(interestRef, {
+          id: field.name,
+          userId: user.uid,
+          careerField: field.name,
+        });
+      } else {
+        await deleteDoc(interestRef);
+      }
+    } catch (e) {
+      console.error("Error updating interest:", e);
+    } finally {
+      setIsProcessing(false);
     }
   };
+
+  const isLoading = interestsLoading || isProcessing;
 
   return (
     <Card 
@@ -46,11 +76,11 @@ export default function CareerCard({ field }: CareerCardProps) {
       <CardFooter className="mt-auto pt-4">
         <Button
           onClick={handleSelect}
-          disabled={!user || !!isSelected || isLoading}
+          disabled={!user || isLoading}
           className="w-full"
           variant={isSelected ? "secondary" : "default"}
         >
-          {isLoading && !isSelected ? (
+          {isLoading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : isSelected ? (
             <Check className="mr-2 h-4 w-4" />

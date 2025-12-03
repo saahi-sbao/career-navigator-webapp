@@ -15,6 +15,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getFirestore } from 'firebase-admin/firestore';
+import { initializeApp, getApps, App } from 'firebase-admin/app';
 
 // Define the input schema for the flow
 const PersonalizedCareerSuggestionsInputSchema = z.object({
@@ -34,6 +36,15 @@ export type PersonalizedCareerSuggestionsOutput = z.infer<
   typeof PersonalizedCareerSuggestionsOutputSchema
 >;
 
+let app: App;
+if (!getApps().length) {
+  app = initializeApp();
+} else {
+  app = getApps()[0];
+}
+const firestore = getFirestore(app);
+
+
 // Exported function to call the flow
 export async function getPersonalizedCareerSuggestions(
   input: PersonalizedCareerSuggestionsInput
@@ -50,10 +61,12 @@ const getUserCareerInterests = ai.defineTool({
   }),
   outputSchema: z.array(z.string()).describe('List of career interests.'),
 },
-async (input) => {
-    // TODO: Replace with actual implementation to fetch from database
-    const mockInterests = ['Software Engineering', 'Data Science'];
-    return mockInterests;  
+async ({ userId }) => {
+    const interestsSnapshot = await firestore.collection(`users/${userId}/careerInterests`).get();
+    if (interestsSnapshot.empty) {
+        return [];
+    }
+    return interestsSnapshot.docs.map(doc => doc.data().careerField);
 });
 
 
@@ -68,9 +81,8 @@ const personalizedCareerSuggestionsPrompt = ai.definePrompt({
   Based on the user's career interests, suggest relevant career paths.
 
   User ID: {{{userId}}}
-  Career Interests: {{#each (await getUserCareerInterests userId=userId)}}- {{{this}}} {{/each}}
-
-  Suggestions:
+  
+  Please provide suggestions for a user with these interests.
   `,
 });
 
@@ -81,7 +93,8 @@ const personalizedCareerSuggestionsFlow = ai.defineFlow(
     inputSchema: PersonalizedCareerSuggestionsInputSchema,
     outputSchema: PersonalizedCareerSuggestionsOutputSchema,
   },
-  async input => {\n    const {output} = await personalizedCareerSuggestionsPrompt(input);
+  async input => {
+    const {output} = await personalizedCareerSuggestionsPrompt(input);
     return output!;
   }
 );

@@ -1,23 +1,43 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { useUser } from '@/lib/auth';
+import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fetchSuggestionsAction } from '@/app/actions';
 import { Lightbulb } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { collection, onSnapshot } from 'firebase/firestore';
 
 export default function Suggestions() {
   const { user } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
 
+  const interestsCol = useMemoFirebase(
+    () => (user ? collection(firestore, `users/${user.uid}/careerInterests`) : null),
+    [user, firestore]
+  );
+
   useEffect(() => {
-    if (user && user.interests.length > 0) {
+    if (!interestsCol) {
+      setInterests([]);
+      return;
+    }
+    const unsubscribe = onSnapshot(interestsCol, (snapshot) => {
+      const newInterests = snapshot.docs.map(doc => doc.data().careerField);
+      setInterests(newInterests);
+    });
+    return () => unsubscribe();
+  }, [interestsCol]);
+
+  useEffect(() => {
+    if (user && interests.length > 0) {
       startTransition(async () => {
-        const result = await fetchSuggestionsAction({ userId: user.id });
+        const result = await fetchSuggestionsAction({ userId: user.uid });
         if (result.success) {
           setSuggestions(result.suggestions ?? []);
         } else {
@@ -31,9 +51,9 @@ export default function Suggestions() {
     } else {
         setSuggestions([]);
     }
-  }, [user?.interests, user?.id, toast]);
+  }, [interests, user?.uid, toast, user]);
 
-  if (!user || user.interests.length === 0) {
+  if (!user || interests.length === 0) {
     return null;
   }
 
@@ -46,7 +66,7 @@ export default function Suggestions() {
           </div>
           <CardTitle>Personalized Career Suggestions</CardTitle>
         </div>
-        <CardDescription>Based on your interest in: {user.interests.join(', ')}</CardDescription>
+        <CardDescription>Based on your interest in: {interests.join(', ')}</CardDescription>
       </CardHeader>
       <CardContent>
         {isPending ? (

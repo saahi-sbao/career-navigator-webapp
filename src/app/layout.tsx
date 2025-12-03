@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { UserProvider } from '@/lib/auth';
 import { Toaster } from '@/components/ui/toaster';
+import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'Career Navigator',
@@ -24,7 +24,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <UserProvider>{children}</UserProvider>
+        <FirebaseClientProvider>{children}</FirebaseClientProvider>
         <Toaster />
       </body>
     </html>
