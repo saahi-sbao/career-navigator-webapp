@@ -4,6 +4,7 @@
 import { getPersonalizedCareerSuggestions } from '@/ai/flows/personalized-career-suggestions';
 import { generateChatResponse } from '@/ai/flows/chat';
 import { generateAudio } from '@/ai/flows/tts';
+import { generateAvatar } from '@/ai/flows/generate-avatar';
 import { z } from 'zod';
 import type { ChatMessage } from '@/components/chatbot';
 
@@ -63,4 +64,22 @@ export async function generateAudioAction(data: { text: string, voiceName?: stri
     }
     return { success: false, error: 'An unexpected error occurred while generating audio.' };
   }
+}
+
+const AvatarSchema = z.object({
+    prompt: z.string(),
+});
+
+export async function generateAvatarAction(data: { prompt: string }) {
+    try {
+        const validatedData = AvatarSchema.parse(data);
+        const result = await generateAvatar(validatedData);
+        return { success: true, imageUrl: result.imageUrl };
+    } catch (error) {
+        console.error('Error generating avatar:', error);
+        if (error instanceof z.ZodError) {
+            return { success: false, error: 'Invalid prompt format for avatar generation.' };
+        }
+        return { success: false, error: 'An unexpected error occurred while generating the avatar.' };
+    }
 }
