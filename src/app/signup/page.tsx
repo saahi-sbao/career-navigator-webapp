@@ -80,6 +80,8 @@ export default function SignupPage() {
     } catch (error: any) {
         if (error.code === 'auth/email-already-in-use') {
             setError('This admin account has already been created. Please log in.');
+        } else if (error.code === 'auth/invalid-email') {
+            setError('The email address is not valid.');
         } else {
             setError(error.message);
         }
