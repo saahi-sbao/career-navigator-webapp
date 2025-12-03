@@ -1,0 +1,144 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model combined with a role-based access control (RBAC) system for administrators.
+ * A user has full control over their own data tree, and administrators have read-only access to all user data for support and moderation purposes.
+ *
+ * Data Structure: User-specific data, including profiles and career interests, is nested under the `/users/{userId}` path. This creates a clear ownership boundary.
+ * Administrator roles are managed in a separate top-level collection, `/roles_admin/{userId}`, where the existence of a document grants admin privileges.
+ *
+ * Key Security Decisions:
+ * - Default Deny: All paths are closed by default. Access is granted explicitly.
+ * - User Isolation: Users are strictly forbidden from reading or writing data belonging to other users. Listing the top-level `/users` collection is disallowed to protect user privacy.
+ * - Admin Access: Administrators are granted read-only access to user data. They cannot write, update, or delete user content, preventing accidental data modification.
+ * - Immutable Roles: The `/roles_admin` collection is read-only from the client-side. This is a critical security measure to prevent any user from elevating their own privileges. Admin roles must be assigned out-of-band (e.g., using the Firebase Admin SDK or the Google Cloud Console).
+ *
+ * Denormalization for Authorization: The `CareerInterest` documents contain a denormalized `userId` field. This allows security rules to validate ownership on a `careerInterest` document directly, without performing a costly and slow `get()` operation on the parent user document. This makes rules faster and more efficient.
+ *
+ * Structural Segregation: User data (`/users`) is structurally separated from administrative roles (`/roles_admin`). This clean separation simplifies rule logic and enhances security by allowing different, more restrictive policies to be applied to the sensitive roles collection.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------------------------------------
+    // Helper Functions
+    // ------------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the foundation of the user-ownership model.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks if the requesting user is an administrator.
+     * This is determined by the existence of a document in the '/roles_admin' collection
+     * with the user's UID as the document ID. This is more secure and efficient
+     * than checking a field within a document.
+     */
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * Verifies ownership for an existing document. Used for update and delete operations
+     * to ensure the target document exists before the operation is attempted.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Validates relational integrity for a new user document on creation.
+     * Ensures the document's internal `id` field matches the document ID in the path.
+     */
+    function isCreatingValidUserDocument(userId) {
+      return request.resource.data.id == userId;
+    }
+
+    /**
+     * Enforces immutability of the user's `id` field during an update.
+     * Prevents the primary identifier from being changed after creation.
+     */
+    function isUpdatingValidUserDocument() {
+      return request.resource.data.id == resource.data.id;
+    }
+    
+    /**
+     * Validates relational integrity for a new career interest document on creation.
+     * Ensures the internal `userId` and `id` fields match the IDs from the path.
+     */
+    function isCreatingValidCareerInterest(userId, careerInterestId) {
+      return request.resource.data.userId == userId && request.resource.data.id == careerInterestId;
+    }
+
+    /**
+     * Enforces immutability of key relational fields for a career interest.
+     * Prevents the ownership link (`userId`) and primary ID (`id`) from being changed.
+     */
+    function isUpdatingValidCareerInterest() {
+      return request.resource.data.userId == resource.data.userId && request.resource.data.id == resource.data.id;
+    }
+
+    // ------------------------------------------------------------------------
+    // Collection Rules
+    // ------------------------------------------------------------------------
+
+    /**
+     * @description Manages user profile documents. Only the document owner can create,
+     *   update, or delete their own profile. Admins are granted read-only access.
+     * @path /users/{userId}
+     * @allow A user (uid: 'user123') reads their own profile at `/users/user123`. (get)
+     * @deny A user (uid: 'user456') tries to read another user's profile at `/users/user123`. (get)
+     * @principle Restricts access to a user's own data tree and prevents enumeration of all users.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if false;
+      allow create: if isOwner(userId) && isCreatingValidUserDocument(userId);
+      allow update: if isExistingOwner(userId) && isUpdatingValidUserDocument();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Secures the career interests for a specific user. The user has full
+     *   CRUD permissions on their own interests. Admins can read this data.
+     * @path /users/{userId}/careerInterests/{careerInterestId}
+     * @allow A user (uid: 'user123') creates a new interest at `/users/user123/careerInterests/ci_abc`. (create)
+     * @deny A user (uid: 'user456') tries to delete an interest at `/users/user123/careerInterests/ci_abc`. (delete)
+     * @principle Enforces document ownership for all operations within a user-owned subcollection.
+     */
+    match /users/{userId}/careerInterests/{careerInterestId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isCreatingValidCareerInterest(userId, careerInterestId);
+      allow update: if isExistingOwner(userId) && isUpdatingValidCareerInterest();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Defines admin roles. The existence of a document here grants admin
+     *   privileges. This collection is read-only to all clients to prevent self-promotion.
+     *   Admin roles must be managed via the Admin SDK or Cloud Console.
+     * @path /roles_admin/{userId}
+     * @allow A signed-in user checks for their own admin status. (get) This is required for the `isAdmin()` function to work.
+     * @deny Any client, including an admin, tries to create, update, or delete a role document. (write)
+     * @principle Secures sensitive role-granting data by making it immutable from the client-side.
+     */
+    match /roles_admin/{userId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}

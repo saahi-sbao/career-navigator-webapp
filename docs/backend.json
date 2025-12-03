@@ -1,0 +1,139 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user within the Career Navigator application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The username of the user."
+        },
+        "careerInterestIds": {
+          "type": "array",
+          "description": "References to CareerInterests. (Relationship: User 1:N CareerInterest)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "username"
+      ]
+    },
+    "CareerInterest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CareerInterest",
+      "type": "object",
+      "description": "Represents a career interest selected by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the career interest entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N CareerInterest)"
+        },
+        "careerField": {
+          "type": "string",
+          "description": "The name or identifier of the career field."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "careerField"
+      ]
+    },
+    "AdminUser": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AdminUser",
+      "type": "object",
+      "description": "Represents an administrator user with elevated privileges.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the administrator user."
+        },
+        "username": {
+          "type": "string",
+          "description": "The username of the administrator."
+        }
+      },
+      "required": [
+        "id",
+        "username"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles.  Uses path-based ownership for simplified security rules.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/careerInterests/{careerInterestId}",
+        "definition": {
+          "entityName": "CareerInterest",
+          "schema": {
+            "$ref": "#/backend/entities/CareerInterest"
+          },
+          "description": "Stores career interests for each user. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "careerInterestId",
+              "description": "The unique identifier for the career interest."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "AdminUser",
+          "schema": {
+            "$ref": "#/backend/entities/AdminUser"
+          },
+          "description": "Collection to store admin users.  The existence of a document grants admin privileges. Uses existence over content.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the admin user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This Firestore structure prioritizes authorization independence and simplifies security rules. It leverages path-based ownership for user-specific data and a dedicated collection for admin roles, avoiding complex `get()` calls in security rules. Denormalization is used to ensure authorization independence. Specifically, the `CareerInterest` documents contain a `userId` field, which is a denormalized attribute from the `User` document. This allows us to enforce security rules on `CareerInterest` documents without needing to `get()` the `User` document. This promotes atomic operations and simplifies debugging. The `roles_admin` collection supports the admin panel requirement.  The structure supports QAPs. User-owned data is segregated under the `/users/{userId}` path, allowing for secure `list` operations based on user ID.  Admin privileges are determined by the existence of a document in the `/roles_admin/{uid}` collection. This approach, known as Existence over Content, simplifies rule logic."
+  }
+}
