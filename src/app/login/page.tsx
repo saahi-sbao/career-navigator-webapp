@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth, useUser } from "@/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
@@ -19,6 +19,12 @@ export default function LoginPage() {
   const auth = useAuth();
   const router = useRouter();
   const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -35,7 +41,6 @@ export default function LoginPage() {
   };
 
   if (user) {
-    router.push('/');
     return null;
   }
 

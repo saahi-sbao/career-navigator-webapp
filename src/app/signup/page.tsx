@@ -14,7 +14,7 @@ import { useAuth, useFirestore, useUser } from "@/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
@@ -40,6 +40,12 @@ export default function SignupPage() {
   const router = useRouter();
   const { user } = useUser();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const handleSignup = async (e: FormEvent) => {
     e.preventDefault();
@@ -91,7 +97,6 @@ export default function SignupPage() {
   };
 
   if (user) {
-    router.push('/');
     return null;
   }
 
