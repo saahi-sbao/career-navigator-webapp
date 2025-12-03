@@ -1,3 +1,4 @@
+
 import Header from '@/components/header';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
@@ -74,7 +75,7 @@ export default function AboutPage() {
           <div className="space-y-6">
             <StatCard value="8" label="Intelligence Types" />
             <StatCard value="40" label="Assessment Questions" />
-            <StatCard value="3" label="Career Pathways" />
+            <StatCard value="12" label="Career Fields" />
             <StatCard value="1,000+" label="Career Options" />
           </div>
 
