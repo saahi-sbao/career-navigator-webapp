@@ -48,6 +48,94 @@ const CAREER_FIELDS: CareerField[] = [
       iconText: 'text-yellow-600',
     },
   },
+  {
+    name: 'Education & Training',
+    description: 'Teaching, corporate training, curriculum.',
+    icon: '🎓',
+    theme: {
+      bg: 'bg-purple-50',
+      border: 'border-purple-200',
+      text: 'text-purple-800',
+      iconText: 'text-purple-600',
+    },
+  },
+  {
+    name: 'Law & Public Policy',
+    description: 'Legal services, government, public admin.',
+    icon: '⚖️',
+    theme: {
+      bg: 'bg-gray-100',
+      border: 'border-gray-300',
+      text: 'text-gray-800',
+      iconText: 'text-gray-600',
+    },
+  },
+  {
+    name: 'Skilled Trades & Construction',
+    description: 'Electrician, plumbing, construction mgmt.',
+    icon: '🛠️',
+    theme: {
+      bg: 'bg-orange-50',
+      border: 'border-orange-200',
+      text: 'text-orange-800',
+      iconText: 'text-orange-600',
+    },
+  },
+  {
+    name: 'Marketing & Sales',
+    description: 'Digital marketing, advertising, sales.',
+    icon: '📢',
+    theme: {
+      bg: 'bg-pink-50',
+      border: 'border-pink-200',
+      text: 'text-pink-800',
+      iconText: 'text-pink-600',
+    },
+  },
+  {
+    name: 'Hospitality & Tourism',
+    description: 'Hotel management, event planning, travel.',
+    icon: '🏨',
+    theme: {
+      bg: 'bg-cyan-50',
+      border: 'border-cyan-200',
+      text: 'text-cyan-800',
+      iconText: 'text-cyan-600',
+    },
+  },
+  {
+    name: 'Agriculture & Environmental',
+    description: 'Farming, conservation, sustainability.',
+    icon: '🌿',
+    theme: {
+      bg: 'bg-lime-50',
+      border: 'border-lime-200',
+      text: 'text-lime-800',
+      iconText: 'text-lime-600',
+    },
+  },
+  {
+    name: 'Media & Communication',
+    description: 'Journalism, public relations, broadcasting.',
+    icon: '📡',
+    theme: {
+      bg: 'bg-fuchsia-50',
+      border: 'border-fuchsia-200',
+      text: 'text-fuchsia-800',
+      iconText: 'text-fuchsia-600',
+    },
+  },
+  {
+    name: 'Human Services & Counseling',
+    description: 'Social work, counseling, community support.',
+    icon: '❤️',
+    theme: {
+      bg: 'bg-rose-50',
+      border: 'border-rose-200',
+      text: 'text-rose-800',
+      iconText: 'text-rose-600',
+    },
+  },
 ];
 
 export default function CareerGrid() {
