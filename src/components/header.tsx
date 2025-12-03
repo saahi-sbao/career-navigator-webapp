@@ -23,6 +23,18 @@ export default function Header() {
               Assessment
             </Link>
             <Link
+              href="/#career-fields"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Pathways
+            </Link>
+             <Link
+              href="/resources"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Resources
+            </Link>
+            <Link
               href="/about"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
