@@ -1,30 +1,24 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import Header from '@/components/header';
+import CareerGrid from '@/components/career-grid';
+import Suggestions from '@/components/suggestions';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow flex justify-center items-start pt-10 px-4 pb-10">
-        <Card className="text-center w-full max-w-2xl">
-          <CardHeader>
-            <CardTitle className="text-3xl font-extrabold">Welcome</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-8">
-              This assessment is based on Howard Gardner's theory of Multiple Intelligences. It helps identify your top strengths and recommends possible career pathways that align with those intelligences.
-            </p>
-            <Button asChild className="text-lg">
-              <Link href="/assessment">
-                Start Assessment <ArrowRight className="ml-2" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </main>
+    <div className="p-4 sm:p-8 min-h-screen flex flex-col items-center">
+      <div className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl max-w-4xl w-full mt-8">
+        <h1 className="text-4xl font-extrabold text-primary-dark mb-2">
+          Career Builder & Explorer (CBE)
+        </h1>
+        <p className="text-sm font-medium text-gray-500 mb-6">
+          Navigate your career path with AI-powered suggestions.
+        </p>
+
+        <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-6">
+          Explore Career Fields
+        </h2>
+
+        <CareerGrid />
+        <Suggestions />
+      </div>
     </div>
   );
 }
