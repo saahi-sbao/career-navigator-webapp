@@ -3,22 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card>
+      <main className="flex-grow container mx-auto px-4 py-10">
+        <Card className="w-full max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle>About Career Navigator</CardTitle>
+            <CardTitle className="text-3xl font-extrabold">About This System</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <p>
-              Welcome to Career Navigator, your personal guide to discovering a fulfilling career path. Our mission is to empower you with the insights and tools needed to make informed decisions about your professional future.
+              This Career Guidance System is designed to assist students in Kenya's Competency-Based Curriculum (CBE) in discovering their interests and aptitudes.
             </p>
             <p>
-              This platform leverages Howard Gardner's theory of Multiple Intelligences to help you understand your unique cognitive strengths. By identifying your dominant intelligences, we provide personalized career suggestions that align with your natural talents and interests.
+              By leveraging established theories like Howard Gardner's Multiple Intelligences, this tool provides a simple yet effective way for students to gain insight into their strengths. The goal is to offer personalized career pathway suggestions that align with their natural talents.
             </p>
             <p>
-              In addition to the assessment, our AI-powered engine allows you to explore various career fields and receive tailored recommendations based on your selected interests. Whether you're just starting out, considering a career change, or simply curious, Career Navigator is here to help you navigate the journey.
+              Whether you are a student exploring future options, a teacher guiding your class, or a parent supporting your child, this system serves as a starting point for important career conversations.
             </p>
           </CardContent>
         </Card>
