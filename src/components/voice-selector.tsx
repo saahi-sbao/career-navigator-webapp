@@ -16,8 +16,8 @@ interface VoiceSelectorProps {
 }
 
 const voices = [
-  { value: 'en-US-Standard-E', label: 'Female', icon: <User className="h-4 w-4" /> },
-  { value: 'en-US-Standard-C', label: 'Male', icon: <User className="h-4 w-4" /> },
+  { value: 'en-US-Standard-E', label: 'Female (Standard)', icon: <User className="h-4 w-4" /> },
+  { value: 'en-US-Standard-C', label: 'Male (Standard)', icon: <User className="h-4 w-4" /> },
   { value: 'Algenib', label: 'Female (Sweet)', icon: <Bot className="h-4 w-4" /> },
   { value: 'Achernar', label: 'Male (Deep)', icon: <Bot className="h-4 w-4" /> },
 ];

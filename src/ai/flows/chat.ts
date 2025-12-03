@@ -40,13 +40,11 @@ const chatFlow = ai.defineFlow(
     const { messages } = input;
     
     // Construct the prompt with history
-    const prompt = [
-        {text: `You are a friendly and helpful career guidance assistant for the "Career Builder & Explorer (CBE)" application. Your audience is students and teachers in Kenya. Answer their questions about careers, subjects, and provide guidance. Be concise and encouraging.`},
-        ...messages.map(msg => ({ role: msg.role, text: msg.content })),
-    ];
+    const history = messages.map(msg => ({ role: msg.role, content: [{ text: msg.content }] }));
 
     const { output } = await ai.generate({
-      prompt,
+      prompt: `You are a friendly and helpful career guidance assistant for the "Career Builder & Explorer (CBE)" application. Your audience is students and teachers in Kenya. Answer their questions about careers, subjects, and provide guidance. Be concise and encouraging.`,
+      history,
     });
 
     return { response: output?.text || "I'm sorry, I couldn't generate a response." };

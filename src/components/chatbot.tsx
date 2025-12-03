@@ -12,11 +12,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bot, Mic, MicOff, Send, Loader2, Volume2, VolumeX } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { generateChatResponseAction, generateAudioAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
-import { Avatar, AvatarFallback } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import VoiceSelector from './voice-selector';
 
 export type ChatMessage = {
@@ -132,7 +132,10 @@ export default function Chatbot() {
         className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
         onClick={() => setIsOpen(true)}
       >
-        <Bot className="h-8 w-8" />
+        <Avatar className="h-12 w-12">
+            <AvatarImage src="https://i.pravatar.cc/150?u=ai-counselor" alt="AI Counselor"/>
+            <AvatarFallback>AI</AvatarFallback>
+        </Avatar>
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -154,6 +157,7 @@ export default function Chatbot() {
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>
                   {message.role === 'model' && (
                     <Avatar className="w-8 h-8">
+                      <AvatarImage src="https://i.pravatar.cc/150?u=ai-counselor" alt="AI Counselor"/>
                       <AvatarFallback>AI</AvatarFallback>
                     </Avatar>
                   )}
@@ -177,6 +181,7 @@ export default function Chatbot() {
               {isPending && (
                 <div className="flex items-start gap-3">
                   <Avatar className="w-8 h-8">
+                    <AvatarImage src="https://i.pravatar.cc/150?u=ai-counselor" alt="AI Counselor"/>
                     <AvatarFallback>AI</AvatarFallback>
                   </Avatar>
                   <div className="rounded-lg px-4 py-2 bg-muted flex items-center">
