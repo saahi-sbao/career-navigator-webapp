@@ -37,7 +37,7 @@ export default function Suggestions() {
   useEffect(() => {
     if (user && interests.length > 0) {
       startTransition(async () => {
-        const result = await fetchSuggestionsAction({ userId: user.uid });
+        const result = await fetchSuggestionsAction({ interests: interests });
         if (result.success) {
           setSuggestions(result.suggestions ?? []);
         } else {

@@ -4,13 +4,13 @@ import { getPersonalizedCareerSuggestions } from '@/ai/flows/personalized-career
 import { z } from 'zod';
 
 const SuggestionsSchema = z.object({
-  userId: z.string(),
+  interests: z.array(z.string()),
 });
 
-export async function fetchSuggestionsAction(data: { userId: string }) {
+export async function fetchSuggestionsAction(data: { interests: string[] }) {
   try {
     const validatedData = SuggestionsSchema.parse(data);
-    const result = await getPersonalizedCareerSuggestions({ userId: validatedData.userId });
+    const result = await getPersonalizedCareerSuggestions({ interests: validatedData.interests });
     return { success: true, suggestions: result.suggestions };
   } catch (error) {
     console.error('Error fetching suggestions:', error);
