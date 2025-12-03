@@ -531,7 +531,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                                         <span className="text-sm font-bold text-primary">{score}%</span>
                                     </div>
                                     <Progress value={score} className="h-3" />
-                                </div>
+                                d</div>
                             )
                         })}
                     </div>
