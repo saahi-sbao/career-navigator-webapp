@@ -8,8 +8,8 @@ export default function StartupAnimation() {
         <Logo />
       </div>
       <div className="mt-6 text-center">
-        <h1 className="text-3xl font-bold text-primary">Career Guidance System</h1>
-        <p className="text-muted-foreground mt-1">Loading your personalized experience...</p>
+        <h1 className="text-3xl font-bold text-primary">Career Navigator</h1>
+        <p className="text-muted-foreground mt-1">Your Aid to a Bright Future</p>
       </div>
     </div>
   );

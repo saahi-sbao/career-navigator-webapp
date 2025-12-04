@@ -12,7 +12,7 @@ export default function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Logo />
             <span className="hidden font-bold sm:inline-block">
-              Career Guidance
+              Career Navigator
             </span>
           </Link>
           <nav className="flex items-center gap-6 text-sm">

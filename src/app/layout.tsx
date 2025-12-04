@@ -8,6 +8,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import Chatbot from '@/components/chatbot';
 import { Inter as FontSans } from "next/font/google"
 import { cn } from "@/lib/utils"
+import { useState, useEffect } from 'react';
+import StartupAnimation from '@/components/startup-animation';
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -19,6 +21,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -33,10 +45,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            <div className="relative flex min-h-screen flex-col bg-background/80 backdrop-blur-sm">
-              {children}
-            </div>
-            <Chatbot />
+            {isLoading ? <StartupAnimation /> : (
+              <>
+                <div className="relative flex min-h-screen flex-col bg-background/80 backdrop-blur-sm">
+                  {children}
+                </div>
+                <Chatbot />
+              </>
+            )}
           </FirebaseClientProvider>
           <Toaster />
         </ThemeProvider>
