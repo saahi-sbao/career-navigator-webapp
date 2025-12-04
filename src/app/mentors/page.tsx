@@ -108,7 +108,7 @@ export default function MentorsPage() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-secondary/20">
+        <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-grow container mx-auto px-4 py-12">
                 <div className="text-center mb-12">

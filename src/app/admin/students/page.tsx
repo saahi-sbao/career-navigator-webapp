@@ -27,7 +27,7 @@ export default function ManageStudentsPage() {
   const firestore = useFirestore();
 
   const usersQuery = useMemoFirebase(
-    () => (isAdmin ? query(collection(firestore, 'users')) : null),
+    () => (isAdmin && firestore ? query(collection(firestore, 'users')) : null),
     [isAdmin, firestore]
   );
   const { data: users, isLoading: usersLoading } = useCollection<AppUser>(usersQuery);
