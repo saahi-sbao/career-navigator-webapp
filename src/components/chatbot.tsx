@@ -12,12 +12,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Mic, MicOff, Send, Loader2, Volume2, VolumeX, Smile } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, Volume2, VolumeX, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { generateChatResponseAction, generateAudioAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import VoiceSelector from './voice-selector';
+import Logo from './logo';
 
 export type ChatMessage = {
   role: 'user' | 'model';
@@ -170,7 +171,7 @@ export default function Chatbot() {
         className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
         onClick={() => handleOpenChange(true)}
       >
-        <Smile className="h-8 w-8" />
+        <Bot className="h-8 w-8" />
       </Button>
 
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -191,9 +192,8 @@ export default function Chatbot() {
               {messages.map((message, index) => (
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>
                   {message.role === 'model' && (
-                    <Avatar className="w-8 h-8">
-                       <AvatarImage src="https://storage.googleapis.com/project-spark-3c51e.appspot.com/generated/v81dkbn3g0l2t75t707a3l9j1/image_0.png" alt="AI Counselor"/>
-                      <AvatarFallback>AI</AvatarFallback>
+                    <Avatar className="w-8 h-8 bg-background">
+                       <div className="p-1.5"><Logo /></div>
                     </Avatar>
                   )}
                   <div
@@ -215,9 +215,8 @@ export default function Chatbot() {
               ))}
               {isPending && (
                 <div className="flex items-start gap-3">
-                  <Avatar className="w-8 h-8">
-                     <AvatarImage src="https://storage.googleapis.com/project-spark-3c51e.appspot.com/generated/v81dkbn3g0l2t75t707a3l9j1/image_0.png" alt="AI Counselor"/>
-                    <AvatarFallback>AI</AvatarFallback>
+                  <Avatar className="w-8 h-8 bg-background">
+                     <div className="p-1.5"><Logo /></div>
                   </Avatar>
                   <div className="rounded-lg px-4 py-2 bg-muted flex items-center">
                     <Loader2 className="h-5 w-5 animate-spin" />

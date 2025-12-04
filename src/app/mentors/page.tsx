@@ -6,9 +6,10 @@ import { collection, query } from 'firebase/firestore';
 import Header from '@/components/header';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Mail, User, MapPin, Phone, LogIn } from 'lucide-react';
+import { Loader2, Mail, User, MapPin, Phone, LogIn, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useAdmin } from '@/hooks/use-admin';
 
 interface Mentor {
     id: string;
@@ -21,6 +22,7 @@ interface Mentor {
 export default function MentorsPage() {
     const firestore = useFirestore();
     const { user, isUserLoading } = useUser();
+    const { isAdmin } = useAdmin();
 
     // Only create the query if the user is logged in.
     const mentorsQuery = useMemoFirebase(
@@ -118,6 +120,13 @@ export default function MentorsPage() {
                 </div>
                 {renderContent()}
             </main>
+            {isAdmin && (
+                <Button asChild className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg" aria-label="Add Mentor">
+                    <Link href="/admin/mentors">
+                        <Plus className="h-8 w-8" />
+                    </Link>
+                </Button>
+            )}
         </div>
     );
 }
