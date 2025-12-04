@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Bot, User } from "lucide-react";
+import { User } from "lucide-react";
 
 interface VoiceSelectorProps {
   selectedVoice: string;
@@ -16,8 +16,6 @@ interface VoiceSelectorProps {
 }
 
 const voices = [
-  { value: 'Algenib', label: 'Female (Sweet)', icon: <Bot className="h-4 w-4" /> },
-  { value: 'Achernar', label: 'Male (Deep)', icon: <Bot className="h-4 w-4" /> },
   { value: 'en-US-Standard-E', label: 'Female (Standard)', icon: <User className="h-4 w-4" /> },
   { value: 'en-US-Standard-C', label: 'Male (Standard)', icon: <User className="h-4 w-4" /> },
 ];
