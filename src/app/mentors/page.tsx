@@ -121,7 +121,7 @@ export default function MentorsPage() {
                 {renderContent()}
             </main>
             {isAdmin && (
-                <Button asChild className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg" aria-label="Add Mentor">
+                <Button asChild className="fixed bottom-6 left-6 h-16 w-16 rounded-full shadow-lg" aria-label="Add Mentor">
                     <Link href="/admin/mentors">
                         <Plus className="h-8 w-8" />
                     </Link>
