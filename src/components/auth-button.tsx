@@ -1,6 +1,6 @@
 'use client';
 
-import { LogIn, LogOut, Loader2, User as UserIcon, UserCircle } from 'lucide-react';
+import { LogIn, LogOut, Loader2, User as UserIcon, UserCircle, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser, useAuth } from '@/firebase';
 import {
@@ -76,14 +76,14 @@ export default function AuthButton() {
               <span>Profile</span>
             </Link>
           </DropdownMenuItem>
-          {isAdmin || userRole === 'Teacher' || userRole === 'Admin' ? (
+          {isAdmin && (
             <DropdownMenuItem asChild>
               <Link href="/admin">
-                <UserIcon className="mr-2 h-4 w-4" />
-                <span>Dashboard</span>
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                <span>Admin Panel</span>
               </Link>
             </DropdownMenuItem>
-          ) : null}
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />

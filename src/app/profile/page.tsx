@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { useAuth, useUser, useFirebase } from '@/firebase';
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
+import { doc } from 'firebase/firestore';
 import { Loader2, Sparkles, Upload } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,12 +15,20 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import { generateAvatarAction } from '../actions';
+import { Badge } from '@/components/ui/badge';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+
+  const userDocRef = useMemoFirebase(
+    () => (user ? doc(firestore, `users/${user.uid}`) : null),
+    [user, firestore]
+  );
+  const { data: userDoc, isLoading: isDocLoading } = useDoc(userDocRef);
 
   const [avatarPrompt, setAvatarPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -63,23 +71,18 @@ export default function ProfilePage() {
   };
 
   const handleSaveProfilePicture = async () => {
-    if (!previewImage || !user || !auth) return;
+    if (!previewImage || !user || !auth || !auth.currentUser) return;
 
     setIsUploading(true);
     const storage = getStorage();
     const storageRef = ref(storage, `avatars/${user.uid}/profile.png`);
 
     try {
-      // Upload the new image (as a data URL)
       await uploadString(storageRef, previewImage, 'data_url');
       const downloadURL = await getDownloadURL(storageRef);
-
-      // Update the user's profile in Firebase Auth
-      await updateProfile(auth.currentUser!, { photoURL: downloadURL });
+      await updateProfile(auth.currentUser, { photoURL: downloadURL });
       
       toast({ title: 'Profile Picture Updated!', description: 'Your new avatar is now active.' });
-      // Force a refresh of the user object by reloading, not ideal but simple
-      // A better solution would involve re-fetching the user state.
       router.refresh(); 
 
     } catch (error: any) {
@@ -90,7 +93,7 @@ export default function ProfilePage() {
     }
   };
 
-  if (isUserLoading || !user) {
+  if (isUserLoading || !user || isDocLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-16 w-16 animate-spin" />
@@ -98,22 +101,25 @@ export default function ProfilePage() {
     );
   }
 
+  const displayName = user.displayName || userDoc?.username || 'User';
+  const userRole = userDoc?.role;
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-10">
         <Card className="w-full max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle>Edit Your Profile</CardTitle>
-            <CardDescription>Update your avatar and personal information.</CardDescription>
+          <CardHeader className="text-center items-center">
+             <Avatar className="h-32 w-32 ring-4 ring-primary ring-offset-4 ring-offset-background">
+                <AvatarImage src={previewImage || user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`} alt={displayName} />
+                <AvatarFallback className="text-4xl">{displayName?.charAt(0).toUpperCase() ?? 'U'}</AvatarFallback>
+            </Avatar>
+            <CardTitle className="pt-4 text-3xl">{displayName}</CardTitle>
+            {userRole && <Badge variant="secondary" className="mt-2">{userRole}</Badge>}
+            <CardDescription>{user.email || user.phoneNumber}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
             <div className="flex flex-col items-center gap-6">
-              <Avatar className="h-32 w-32 ring-4 ring-primary ring-offset-4 ring-offset-background">
-                <AvatarImage src={previewImage || user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`} alt={user.displayName || 'User'} />
-                <AvatarFallback className="text-4xl">{user.displayName?.charAt(0).toUpperCase() ?? 'U'}</AvatarFallback>
-              </Avatar>
-
               {previewImage && (
                 <div className="flex gap-4">
                   <Button onClick={handleSaveProfilePicture} disabled={isUploading}>
@@ -126,7 +132,7 @@ export default function ProfilePage() {
             </div>
             
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Update Profile Picture</h3>
+              <h3 className="font-semibold text-lg text-center">Update Profile Picture</h3>
               <div className="grid gap-4">
                 <Label htmlFor="picture-upload">Upload an Image</Label>
                 <div className="flex items-center gap-3">
@@ -174,6 +180,7 @@ export default function ProfilePage() {
               </div>
             </div>
           </CardContent>
+          <CardFooter></CardFooter>
         </Card>
       </main>
     </div>
