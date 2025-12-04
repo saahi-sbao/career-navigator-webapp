@@ -37,7 +37,7 @@ export default function Chatbot() {
   const [isListening, setIsListening] = useState(false);
   const [isTtsEnabled, setIsTtsEnabled] = useState(true);
   const [audioQueue, setAudioQueue] = useState<HTMLAudioElement[]>([]);
-  const [voice, setVoice] = useState('en-US-Standard-E'); // Default to a standard human voice
+  const [voice, setVoice] = useState('Algenib'); // Default to a valid human voice
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);

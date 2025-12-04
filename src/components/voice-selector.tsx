@@ -16,8 +16,8 @@ interface VoiceSelectorProps {
 }
 
 const voices = [
-  { value: 'en-US-Standard-E', label: 'Female (Standard)', icon: <User className="h-4 w-4" /> },
-  { value: 'en-US-Standard-C', label: 'Male (Standard)', icon: <User className="h-4 w-4" /> },
+  { value: 'Algenib', label: 'Female (Standard)', icon: <User className="h-4 w-4" /> },
+  { value: 'Achernar', label: 'Male (Standard)', icon: <User className="h-4 w-4" /> },
 ];
 
 export default function VoiceSelector({ selectedVoice, onVoiceChange }: VoiceSelectorProps) {
