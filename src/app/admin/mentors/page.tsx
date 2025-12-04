@@ -25,7 +25,8 @@ import { setDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/no
 const mentorSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2, 'Name must be at least 2 characters.'),
-  contract: z.string().email('Invalid email address.'),
+  email: z.string().email('Invalid email address.'),
+  phone: z.string().optional(),
   county: z.string().min(3, 'County must be at least 3 characters.'),
 });
 
@@ -62,7 +63,7 @@ export default function ManageMentorsPage() {
 
   const openDialog = (mentor: Mentor | null = null) => {
     setEditingMentor(mentor);
-    reset(mentor || { name: '', contract: '', county: '' });
+    reset(mentor || { name: '', email: '', phone: '', county: '' });
     setIsDialogOpen(true);
   };
 
@@ -148,7 +149,8 @@ export default function ManageMentorsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Contract (Email)</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
                   <TableHead>County</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -157,7 +159,8 @@ export default function ManageMentorsPage() {
                 {mentors?.map((mentor) => (
                   <TableRow key={mentor.id}>
                     <TableCell className="font-medium">{mentor.name}</TableCell>
-                    <TableCell>{mentor.contract}</TableCell>
+                    <TableCell>{mentor.email}</TableCell>
+                    <TableCell>{mentor.phone || 'N/A'}</TableCell>
                     <TableCell>{mentor.county}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="icon" onClick={() => openDialog(mentor)}>
@@ -188,9 +191,14 @@ export default function ManageMentorsPage() {
                 {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
             </div>
              <div className="space-y-1">
-                <Label htmlFor="contract">Contract (Email)</Label>
-                <Input id="contract" type="email" {...register('contract')} />
-                {errors.contract && <p className="text-xs text-destructive">{errors.contract.message}</p>}
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" {...register('email')} />
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+            </div>
+             <div className="space-y-1">
+                <Label htmlFor="phone">Phone Number (Optional)</Label>
+                <Input id="phone" type="tel" {...register('phone')} />
+                {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
             </div>
              <div className="space-y-1">
                 <Label htmlFor="county">County of Residence</Label>

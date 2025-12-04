@@ -6,14 +6,15 @@ import { collection, query } from 'firebase/firestore';
 import Header from '@/components/header';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Mail, User, MapPin } from 'lucide-react';
+import { Loader2, Mail, User, MapPin, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface Mentor {
     id: string;
     name: string;
-    contract: string;
+    email: string;
+    phone?: string;
     county: string;
 }
 
@@ -64,9 +65,20 @@ export default function MentorsPage() {
                                         <span>{mentor.county}</span>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="flex-grow"></CardContent>
+                                <CardContent className="flex-grow space-y-2 text-center">
+                                    <a href={`mailto:${mentor.email}`} className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary">
+                                        <Mail className="h-4 w-4" />
+                                        <span>{mentor.email}</span>
+                                    </a>
+                                    {mentor.phone && (
+                                        <a href={`tel:${mentor.phone}`} className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary">
+                                            <Phone className="h-4 w-4" />
+                                            <span>{mentor.phone}</span>
+                                        </a>
+                                    )}
+                                </CardContent>
                                 <CardFooter className="flex-col items-stretch">
-                                    <a href={`mailto:${mentor.contract}`}>
+                                    <a href={`mailto:${mentor.email}`}>
                                         <Button className="w-full">
                                             <Mail className="mr-2 h-4 w-4" /> Contact
                                         </Button>

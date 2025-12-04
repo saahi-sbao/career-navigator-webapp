@@ -120,17 +120,21 @@
                 "type": "string",
                 "description": "The full name of the mentor."
             },
-            "contract": {
+            "email": {
                 "type": "string",
                 "format": "email",
                 "description": "Contact email for the mentor."
+            },
+            "phone": {
+                "type": "string",
+                "description": "Contact phone number for the mentor."
             },
             "county": {
                 "type": "string",
                 "description": "The mentor's county of residence."
             }
         },
-        "required": ["id", "name", "contract", "county"]
+        "required": ["id", "name", "email", "county"]
     }
   },
   "auth": {
