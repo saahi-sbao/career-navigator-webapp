@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Mic, MicOff, Send, Loader2, Volume2, VolumeX, Bot } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, Volume2, VolumeX, Smile } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { generateChatResponseAction, generateAudioAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
@@ -83,7 +83,7 @@ export default function Chatbot() {
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if(open && messages.length === 0) {
+    if(open && messages.length === 1) {
         setMessages([INITIAL_MESSAGE]);
     }
     // Stop any playing audio when dialog is closed
@@ -170,7 +170,7 @@ export default function Chatbot() {
         className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
         onClick={() => handleOpenChange(true)}
       >
-        <Bot className="h-8 w-8" />
+        <Smile className="h-8 w-8" />
       </Button>
 
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
