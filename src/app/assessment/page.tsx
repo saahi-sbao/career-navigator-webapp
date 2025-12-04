@@ -7,11 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import { ArrowRight, Redo, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { cn } from '@/lib/utils';
+import { useUser, useFirestore } from '@/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 
 // --- DATA AND CONFIGURATION ---
@@ -102,6 +103,9 @@ export default function AssessmentPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [results, setResults] = useState<AssessmentResults | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useUser();
+  const firestore = useFirestore();
+
 
   useEffect(() => {
     const savedInfo = localStorage.getItem('studentInfo');
@@ -164,7 +168,7 @@ export default function AssessmentPage() {
       }
   }
 
-  const submitAssessment = () => {
+  const submitAssessment = async () => {
     if (Object.keys(userAnswers).length !== QUESTIONS.length) {
       setError("Please answer all 40 questions before submitting.");
       const firstUnanswered = QUESTIONS.findIndex(q => userAnswers[q.id] === undefined);
@@ -223,9 +227,10 @@ export default function AssessmentPage() {
                 highestMatchScore = normalizedMatchScore;
                 bestMatch = path;
             } else if (normalizedMatchScore === highestMatchScore && bestMatch) {
-                const primaryMI = Object.keys(path.requiredIntelligences)[0];
+                const primaryMI = Object.keys(path.requiredIntelligences).sort((a,b) => path.requiredIntelligences[b as keyof typeof path.requiredIntelligences] - path.requiredIntelligences[a as keyof typeof path.requiredIntelligences])[0];
                 const currentPrimaryScore = miScores[primaryMI] || 0;
-                const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences)[0];
+                
+                const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences).sort((a,b) => bestMatch.requiredIntelligences[b as keyof typeof bestMatch.requiredIntelligences] - bestMatch.requiredIntelligences[a as keyof typeof bestMatch.requiredIntelligences])[0];
                 const bestPrimaryScore = miScores[bestPrimaryMI] || 0;
 
                 if (currentPrimaryScore > bestPrimaryScore) {
@@ -242,6 +247,9 @@ export default function AssessmentPage() {
 
     const miScores = calculateMIScores();
     const recommendation = determinePathway(miScores);
+    
+    // Find dominant intelligence
+    const dominantIntelligence = Object.entries(miScores).reduce((a, b) => a[1] > b[1] ? a : b)[0];
 
     const assessmentResults: AssessmentResults = {
         info: studentInfo!,
@@ -249,6 +257,16 @@ export default function AssessmentPage() {
         recommendation: recommendation,
         timestamp: new Date().toISOString()
     };
+    
+    if (user) {
+        const userRef = doc(firestore, 'users', user.uid);
+        await setDoc(userRef, {
+            assessment: {
+                ...assessmentResults,
+                dominantIntelligence,
+            }
+        }, { merge: true });
+    }
     
     setResults(assessmentResults);
     localStorage.setItem('assessmentResults', JSON.stringify(assessmentResults));

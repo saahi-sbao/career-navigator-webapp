@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -27,6 +28,30 @@
           "description": "References to CareerInterests. (Relationship: User 1:N CareerInterest)",
           "items": {
             "type": "string"
+          }
+        },
+        "assessment": {
+          "type": "object",
+          "description": "Stores the results of the user's career assessment.",
+          "properties": {
+            "info": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "age": { "type": "number" },
+                "school": { "type": "string" }
+              }
+            },
+            "miScores": { "type": "object" },
+            "recommendation": {
+              "type": "object",
+              "properties": {
+                "pathway": { "type": "object" },
+                "confidence": { "type": "number" }
+              }
+            },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "dominantIntelligence": { "type": "string" }
           }
         }
       },
