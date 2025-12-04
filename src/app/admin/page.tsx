@@ -44,7 +44,7 @@ export default function AdminPage() {
             </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Link href="/admin/dashboard">
+            <Link href="/admin/dashboard" passHref>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Assessment Dashboard</CardTitle>
@@ -55,7 +55,7 @@ export default function AdminPage() {
                     </CardContent>
                 </Card>
             </Link>
-            <Link href="/admin/mentors">
+            <Link href="/admin/mentors" passHref>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Manage Mentors</CardTitle>

@@ -87,6 +87,7 @@ export default function ManageMentorsPage() {
   };
 
   const onSubmit: SubmitHandler<MentorFormValues> = async (data) => {
+    if (!firestore) return;
     setIsSubmitting(true);
 
     try {
@@ -100,13 +101,14 @@ export default function ManageMentorsPage() {
             photoUrl = await getDownloadURL(photoRef);
         }
 
-        const mentorData: MentorFormValues = {
+        const mentorData = {
             ...data,
             id: mentorId,
             photoUrl: photoUrl,
         };
         
         const mentorRef = doc(firestore, 'mentors', mentorId);
+        // Using a non-blocking write for better UI responsiveness
         setDocumentNonBlocking(mentorRef, mentorData, { merge: true });
 
         toast({
@@ -127,6 +129,7 @@ export default function ManageMentorsPage() {
   };
 
   const handleDelete = async (mentor: Mentor) => {
+    if (!firestore) return;
     if (!confirm(`Are you sure you want to delete ${mentor.name}? This action cannot be undone.`)) {
       return;
     }
@@ -138,12 +141,14 @@ export default function ManageMentorsPage() {
         // Delete photo from storage if it exists
         if (mentor.photoUrl) {
             const photoRef = ref(storage, `mentors/${mentor.id}/profile.jpg`);
-            await deleteObject(photoRef).catch((error) => {
-                // It's okay if the object doesn't exist, so we catch and ignore not-found errors.
-                if (error.code !== 'storage/object-not-found') {
-                    throw error;
-                }
-            });
+            // Use a try-catch for the deleteObject call to prevent crashes if the file is already gone.
+            try {
+              await deleteObject(photoRef);
+            } catch (storageError: any) {
+              if (storageError.code !== 'storage/object-not-found') {
+                console.warn("Could not delete mentor photo, it may have already been removed:", storageError.message);
+              }
+            }
         }
         
         toast({
@@ -254,7 +259,7 @@ export default function ManageMentorsPage() {
                 </DialogClose>
                 <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Save Mentor
+                    {editingMentor ? 'Save Changes' : 'Save Mentor'}
                 </Button>
             </DialogFooter>
           </form>
