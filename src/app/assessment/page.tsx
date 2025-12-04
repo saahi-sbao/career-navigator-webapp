@@ -11,6 +11,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import { ArrowRight, Redo, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { cn } from '@/lib/utils';
+
 
 // --- DATA AND CONFIGURATION ---
 
@@ -355,6 +357,14 @@ const Assessment = ({ question, index, total, answer, onAnswer, onNavigate, onSu
   const progressPercentage = ((index + 1) / total) * 100;
   if (!question) return null;
 
+  const answerOptions = {
+    1: 'Strongly Disagree',
+    2: 'Disagree',
+    3: 'Neutral',
+    4: 'Agree',
+    5: 'Strongly Agree',
+  };
+
   return (
     <Card className="w-full max-w-3xl">
       <CardHeader>
@@ -369,23 +379,19 @@ const Assessment = ({ question, index, total, answer, onAnswer, onNavigate, onSu
           <Progress value={progressPercentage} className="h-2" />
         </div>
 
-        <RadioGroup
-          value={answer?.toString()}
-          onValueChange={(value) => onAnswer(question.id, parseInt(value))}
-          className="grid grid-cols-1 sm:grid-cols-5 gap-3 mt-8"
-        >
-          {[1, 2, 3, 4, 5].map(value => (
-            <div key={value} className="flex items-center">
-              <RadioGroupItem value={value.toString()} id={`${question.id}-${value}`} />
-              <Label htmlFor={`${question.id}-${value}`} className="ml-2 cursor-pointer">
-                {value}{' '}
-                <span className="text-muted-foreground text-xs">
-                  ({ {1: 'Strongly Disagree', 2: 'Disagree', 3: 'Neutral', 4: 'Agree', 5: 'Strongly Agree'}[value] })
-                </span>
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mt-8">
+            {Object.entries(answerOptions).map(([value, label]) => (
+                <Button
+                    key={value}
+                    variant={answer === parseInt(value) ? "default" : "outline"}
+                    onClick={() => onAnswer(question.id, parseInt(value))}
+                    className="flex flex-col h-auto py-3 text-center"
+                >
+                    <span className="text-lg font-bold">{value}</span>
+                    <span className="text-xs text-wrap">{label}</span>
+                </Button>
+            ))}
+        </div>
 
         {error && <p className="text-destructive text-sm font-medium mt-4 text-center">{error}</p>}
 
