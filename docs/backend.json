@@ -105,6 +105,37 @@
         "id",
         "username"
       ]
+    },
+    "Mentor": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Mentor",
+        "type": "object",
+        "description": "Represents a mentor who can be contacted by students and teachers.",
+        "properties": {
+            "id": {
+                "type": "string",
+                "description": "Unique identifier for the mentor."
+            },
+            "name": {
+                "type": "string",
+                "description": "The full name of the mentor."
+            },
+            "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Contact email for the mentor."
+            },
+            "expertise": {
+                "type": "string",
+                "description": "The mentor's area of expertise or career field."
+            },
+            "photoUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the mentor's profile picture."
+            }
+        },
+        "required": ["id", "name", "email", "expertise"]
     }
   },
   "auth": {
@@ -168,8 +199,24 @@
             }
           ]
         }
+      },
+      {
+          "path": "/mentors/{mentorId}",
+          "definition": {
+              "entityName": "Mentor",
+              "schema": {
+                  "$ref": "#/backend/entities/Mentor"
+              },
+              "description": "Stores mentor profiles. Editable only by admins, but viewable by all authenticated users.",
+              "params": [
+                  {
+                      "name": "mentorId",
+                      "description": "The unique identifier for the mentor."
+                  }
+              ]
+          }
       }
     ],
-    "reasoning": "This Firestore structure prioritizes authorization independence and simplifies security rules. It leverages path-based ownership for user-specific data and a dedicated collection for admin roles, avoiding complex `get()` calls in security rules. Denormalization is used to ensure authorization independence. Specifically, the `CareerInterest` documents contain a `userId` field, which is a denormalized attribute from the `User` document. This allows us to enforce security rules on `CareerInterest` documents without needing to `get()` the `User` document. This promotes atomic operations and simplifies debugging. The `roles_admin` collection supports the admin panel requirement.  The structure supports QAPs. User-owned data is segregated under the `/users/{userId}` path, allowing for secure `list` operations based on user ID.  Admin privileges are determined by the existence of a document in the `/roles_admin/{uid}` collection. This approach, known as Existence over Content, simplifies rule logic."
+    "reasoning": "This Firestore structure prioritizes authorization independence and simplifies security rules. It leverages path-based ownership for user-specific data and a dedicated collection for admin roles, avoiding complex `get()` calls in security rules. Denormalization is used to ensure authorization independence. Specifically, the `CareerInterest` documents contain a `userId` field, which is a denormalized attribute from the `User` document. This allows us to enforce security rules on `CareerInterest` documents without needing to `get()` the `User` document. This promotes atomic operations and simplifies debugging. The `roles_admin` collection supports the admin panel requirement. The `/mentors` collection is added to store mentor profiles, with rules ensuring only admins can manage the data while all authenticated users can read it. The structure supports QAPs. User-owned data is segregated under the `/users/{userId}` path, allowing for secure `list` operations based on user ID.  Admin privileges are determined by the existence of a document in the `/roles_admin/{uid}` collection. This approach, known as Existence over Content, simplifies rule logic."
   }
 }

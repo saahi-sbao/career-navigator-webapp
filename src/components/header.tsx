@@ -28,6 +28,12 @@ export default function Header() {
             >
               Careers
             </Link>
+            <Link
+              href="/mentors"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Mentors
+            </Link>
              <Link
               href="/resources"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
