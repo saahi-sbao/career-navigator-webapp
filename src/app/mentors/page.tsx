@@ -6,16 +6,15 @@ import { collection, query } from 'firebase/firestore';
 import Header from '@/components/header';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Mail, User } from 'lucide-react';
+import { Loader2, Mail, User, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface Mentor {
     id: string;
     name: string;
-    email: string;
-    expertise: string;
-    photoUrl?: string;
+    contract: string;
+    county: string;
 }
 
 export default function MentorsPage() {
@@ -54,17 +53,20 @@ export default function MentorsPage() {
                             <Card key={mentor.id} className="flex flex-col">
                                 <CardHeader className="items-center text-center">
                                     <Avatar className="h-24 w-24 mb-4 ring-2 ring-primary ring-offset-2">
-                                        <AvatarImage src={mentor.photoUrl} alt={mentor.name} />
+                                        <AvatarImage src={`https://i.pravatar.cc/150?u=${mentor.id}`} alt={mentor.name} />
                                         <AvatarFallback>
                                             <User className="h-12 w-12" />
                                         </AvatarFallback>
                                     </Avatar>
                                     <CardTitle>{mentor.name}</CardTitle>
-                                    <Badge variant="secondary">{mentor.expertise}</Badge>
+                                    <div className="flex items-center gap-2 text-muted-foreground mt-2">
+                                        <MapPin className="h-4 w-4" />
+                                        <span>{mentor.county}</span>
+                                    </div>
                                 </CardHeader>
                                 <CardContent className="flex-grow"></CardContent>
                                 <CardFooter className="flex-col items-stretch">
-                                    <a href={`mailto:${mentor.email}`}>
+                                    <a href={`mailto:${mentor.contract}`}>
                                         <Button className="w-full">
                                             <Mail className="mr-2 h-4 w-4" /> Contact
                                         </Button>

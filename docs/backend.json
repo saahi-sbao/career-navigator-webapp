@@ -120,22 +120,17 @@
                 "type": "string",
                 "description": "The full name of the mentor."
             },
-            "email": {
+            "contract": {
                 "type": "string",
                 "format": "email",
                 "description": "Contact email for the mentor."
             },
-            "expertise": {
+            "county": {
                 "type": "string",
-                "description": "The mentor's area of expertise or career field."
-            },
-            "photoUrl": {
-                "type": "string",
-                "format": "uri",
-                "description": "URL of the mentor's profile picture."
+                "description": "The mentor's county of residence."
             }
         },
-        "required": ["id", "name", "email", "expertise"]
+        "required": ["id", "name", "contract", "county"]
     }
   },
   "auth": {
