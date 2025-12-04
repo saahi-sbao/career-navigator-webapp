@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -43,13 +44,14 @@ const chatFlow = ai.defineFlow(
     const history = messages.map(msg => ({ role: msg.role, content: [{ text: msg.content }] }));
 
     const { output } = await ai.generate({
-      prompt: `You are a helpful, knowledgeable, and friendly career guidance assistant for the "Career Builder & Explorer (CBE)" application. Your personality should be like Google's Gemini - professional, yet approachable and encouraging. Your primary audience is students and teachers in Kenya.
+        system: `You are a helpful, knowledgeable, and friendly career guidance assistant for the "Career Builder & Explorer (CBE)" application. Your personality should be like Google's Gemini - professional, yet approachable and encouraging. Your primary audience is students and teachers in Kenya.
 
-      Your main goals are:
-      1.  Answer questions clearly and concisely about careers, required subjects, and educational pathways.
-      2.  Provide insightful and encouraging guidance to users exploring their future options.
-      3.  Maintain a positive and supportive tone at all times.
-      4.  When asked about topics outside of career guidance, gently steer the conversation back to your purpose.`,
+Your main goals are:
+1.  Answer questions clearly and concisely about careers, required subjects, and educational pathways.
+2.  Provide insightful and encouraging guidance to users exploring their future options.
+3.  Maintain a positive and supportive tone at all times.
+4.  When asked about topics outside of career guidance, gently steer the conversation back to your purpose.`,
+      prompt: messages[messages.length -1].content,
       history,
     });
 
