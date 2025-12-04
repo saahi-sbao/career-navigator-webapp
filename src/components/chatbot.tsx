@@ -193,7 +193,7 @@ export default function Chatbot() {
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>
                   {message.role === 'model' && (
                     <Avatar className="w-8 h-8 border bg-background flex items-center justify-center">
-                       <div className="w-5 h-5"><Logo /></div>
+                       <div className="w-6 h-6"><Logo /></div>
                     </Avatar>
                   )}
                   <div
@@ -216,7 +216,7 @@ export default function Chatbot() {
               {isPending && (
                 <div className="flex items-start gap-3">
                   <Avatar className="w-8 h-8 border bg-background flex items-center justify-center">
-                     <div className="w-5 h-5"><Logo /></div>
+                     <div className="w-6 h-6"><Logo /></div>
                   </Avatar>
                   <div className="rounded-lg px-4 py-2 bg-muted flex items-center">
                     <Loader2 className="h-5 w-5 animate-spin" />
