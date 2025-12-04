@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Mic, MicOff, Send, Loader2, Volume2, VolumeX } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, Volume2, VolumeX, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { generateChatResponseAction, generateAudioAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
@@ -24,40 +24,75 @@ export type ChatMessage = {
   content: string;
 };
 
+const INITIAL_MESSAGE: ChatMessage = {
+    role: 'model',
+    content: "Hello! I am your friendly career guidance assistant. How can I help you explore your future today?",
+};
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
   const [isPending, startTransition] = useTransition();
   const [isListening, setIsListening] = useState(false);
   const [isTtsEnabled, setIsTtsEnabled] = useState(true);
   const [audioQueue, setAudioQueue] = useState<HTMLAudioElement[]>([]);
-  const [voice, setVoice] = useState('en-US-Standard-E');
+  const [voice, setVoice] = useState('Algenib'); // Default to a friendly bot voice
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
+  // Scroll to bottom when new messages are added
   useEffect(() => {
-    // Scroll to bottom when new messages are added
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
     }
   }, [messages]);
 
+  // Handle audio playback queue
   useEffect(() => {
-    // Play audio from the queue
-    if (audioQueue.length > 0 && isTtsEnabled) {
-      const audio = audioQueue[0];
-      audio.play();
-      audio.onended = () => {
-        setAudioQueue(prev => prev.slice(1));
-      };
-    } else if (!isTtsEnabled) {
-      // Clear queue if TTS is disabled
-      setAudioQueue([]);
+    const playNextInQueue = () => {
+      if (audioQueue.length > 0 && isTtsEnabled) {
+        const audio = audioQueue[0];
+        audioRef.current = audio;
+        audio.play().catch(e => console.error("Audio playback error:", e));
+        audio.onended = () => {
+          audioRef.current = null;
+          setAudioQueue(prev => prev.slice(1));
+        };
+      }
+    };
+    
+    if(!audioRef.current){
+        playNextInQueue();
     }
   }, [audioQueue, isTtsEnabled]);
+
+  // Stop TTS when chat is closed or TTS is disabled
+  useEffect(() => {
+      return () => {
+          if(audioRef.current) {
+              audioRef.current.pause();
+              audioRef.current = null;
+          }
+          setAudioQueue([]);
+      }
+  }, []);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if(open && messages.length === 0) {
+        setMessages([INITIAL_MESSAGE]);
+    }
+    // Stop any playing audio when dialog is closed
+    if (!open && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+      setAudioQueue([]);
+    }
+  };
 
   const handleSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -75,8 +110,8 @@ export default function Chatbot() {
       recognitionRef.current.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
         setInput(transcript);
-        handleSend(transcript);
-        setIsListening(false);
+        // Use a timeout to allow state to update before sending
+        setTimeout(() => handleSend(transcript), 100);
       };
 
       recognitionRef.current.onerror = (event: any) => {
@@ -91,6 +126,7 @@ export default function Chatbot() {
 
     if (isListening) {
       recognitionRef.current.stop();
+      setIsListening(false);
     } else {
       recognitionRef.current.start();
       setIsListening(true);
@@ -116,12 +152,14 @@ export default function Chatbot() {
           if (audioResult.success && audioResult.audio) {
             const audio = new Audio(audioResult.audio);
             setAudioQueue(prev => [...prev, audio]);
+          } else {
+            console.error("TTS generation failed:", audioResult.error);
           }
         }
       } else {
         toast({ variant: 'destructive', title: 'Error', description: result.error });
-        // Restore user message if AI fails
-        setMessages(prev => prev.slice(0, -1));
+        // Restore messages on failure
+        setMessages(prev => prev.slice(0, prev.length -1));
       }
     });
   };
@@ -130,15 +168,12 @@ export default function Chatbot() {
     <>
       <Button
         className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
-        onClick={() => setIsOpen(true)}
+        onClick={() => handleOpenChange(true)}
       >
-        <Avatar className="h-12 w-12">
-            <AvatarImage src="https://i.pravatar.cc/150?u=ai-counselor" alt="AI Counselor"/>
-            <AvatarFallback>AI</AvatarFallback>
-        </Avatar>
+        <Bot className="h-8 w-8" />
       </Button>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-[425px] md:max-w-[600px] h-[80vh] flex flex-col p-0">
           <DialogHeader className="p-6 pb-2 border-b">
             <DialogTitle className="flex justify-between items-center">
@@ -157,7 +192,7 @@ export default function Chatbot() {
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>
                   {message.role === 'model' && (
                     <Avatar className="w-8 h-8">
-                      <AvatarImage src="https://i.pravatar.cc/150?u=ai-counselor" alt="AI Counselor"/>
+                       <AvatarImage src="https://storage.googleapis.com/project-spark-3c51e.appspot.com/generated/v81dkbn3g0l2t75t707a3l9j1/image_0.png" alt="AI Counselor"/>
                       <AvatarFallback>AI</AvatarFallback>
                     </Avatar>
                   )}
@@ -181,7 +216,7 @@ export default function Chatbot() {
               {isPending && (
                 <div className="flex items-start gap-3">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src="https://i.pravatar.cc/150?u=ai-counselor" alt="AI Counselor"/>
+                     <AvatarImage src="https://storage.googleapis.com/project-spark-3c51e.appspot.com/generated/v81dkbn3g0l2t75t707a3l9j1/image_0.png" alt="AI Counselor"/>
                     <AvatarFallback>AI</AvatarFallback>
                   </Avatar>
                   <div className="rounded-lg px-4 py-2 bg-muted flex items-center">
@@ -218,3 +253,5 @@ export default function Chatbot() {
     </>
   );
 }
+
+    
