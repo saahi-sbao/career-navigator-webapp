@@ -24,7 +24,6 @@ export default function MentorsPage() {
     const { user, isUserLoading } = useUser();
     const { isAdmin } = useAdmin();
 
-    // Only create the query if the user is logged in.
     const mentorsQuery = useMemoFirebase(
         () => (user ? query(collection(firestore, 'mentors')) : null),
         [user, firestore]
@@ -121,7 +120,7 @@ export default function MentorsPage() {
                 {renderContent()}
             </main>
             {isAdmin && (
-                <Button asChild className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg z-40" aria-label="Add Mentor">
+                <Button asChild className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg z-50" aria-label="Add Mentor">
                     <Link href="/admin/mentors">
                         <Plus className="h-8 w-8" />
                     </Link>
