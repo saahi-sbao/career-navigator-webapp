@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -20,47 +21,63 @@ const CAREER_PATHS = [
 ];
 
 const QUESTIONS = [
-  { id: 'q1', text: 'I enjoy writing stories, poems, or detailed reports.', intelligence: 'linguistic' },
-  { id: 'q2', text: 'I can easily explain complex ideas to others using clear language.', intelligence: 'linguistic' },
-  { id: 'q3', text: 'I am good at remembering names, dates, and trivia.', intelligence: 'linguistic' },
-  { id: 'q4', text: 'I prefer to read a book or newspaper in my free time.', intelligence: 'linguistic' },
-  { id: 'q5', text: 'Debating and discussing topics comes naturally to me.', intelligence: 'linguistic' },
-  { id: 'q6', text: 'I am good at solving puzzles, mazes, and logical problems.', intelligence: 'logicalMathematical' },
-  { id: 'q7', text: 'I enjoy performing complex calculations in my head.', intelligence: 'logicalMathematical' },
-  { id: 'q8', text: 'I look for patterns and relationships in numerical data.', intelligence: 'logicalMathematical' },
-  { id: 'q9', text: 'I like to conduct simple experiments to understand how things work.', intelligence: 'logicalMathematical' },
-  { id: 'q10', text: 'I enjoy computer programming or dealing with logical systems.', intelligence: 'logicalMathematical' },
-  { id: 'q11', text: 'I can easily read maps, charts, and diagrams.', intelligence: 'spatial' },
-  { id: 'q12', text: 'I enjoy drawing, painting, or sculpting.', intelligence: 'spatial' },
-  { id: 'q13', text: 'I am good at visualizing objects from different angles (3D thinking).', intelligence: 'spatial' },
-  { id: 'q14', text: 'I notice details and artistic composition in visual things.', intelligence: 'spatial' },
-  { id: 'q15', text: 'I enjoy playing games like chess or geometry puzzles.', intelligence: 'spatial' },
-  { id: 'q16', text: 'I excel at one or more sports or physical activities.', intelligence: 'bodilyKinesthetic' },
-  { id: 'q17', text: 'I prefer to learn by doing things hands-on rather than reading about them.', intelligence: 'bodilyKinesthetic' },
-  { id: 'q18', text: 'I am generally well-coordinated and rarely bump into things.', intelligence: 'bodilyKinesthetic' },
-  { id: 'q19', text: 'I enjoy working with my hands, such as crafting or carpentry.', intelligence: 'bodilyKinesthetic' },
-  { id: 'q20', text: 'I use body language and gestures frequently when I speak.', intelligence: 'bodilyKinesthetic' },
-  { id: 'q21', text: 'I can easily detect when a musical note is off-key.', intelligence: 'musical' },
-  { id: 'q22', text: 'I enjoy singing or playing a musical instrument.', intelligence: 'musical' },
-  { id: 'q23', text: 'I often hum or tap rhythms unconsciously.', intelligence: 'musical' },
-  { id: 'q24', text: 'Music has a powerful effect on my mood.', intelligence: 'musical' },
-  { id: 'q25', text: 'I can remember melodies and songs easily.', intelligence: 'musical' },
-  { id: 'q26', text: 'I am good at mediating conflicts between friends.', intelligence: 'interpersonal' },
-  { id: 'q27', text: 'I enjoy being part of a team or group project.', intelligence: 'interpersonal' },
-  { id: 'q28', text: 'Friends often come to me for advice on personal matters.', intelligence: 'interpersonal' },
-  { id: 'q29', text: 'I can easily sense the feelings and moods of others.', intelligence: 'interpersonal' },
-  { id: 'q30', text: 'I enjoy teaching or explaining things to a group of people.', intelligence: 'interpersonal' },
-  { id: 'q31', text: 'I am highly aware of my own emotions and motivations.', intelligence: 'intrapersonal' },
-  { id: 'q32', text: 'I enjoy working on projects alone and setting my own goals.', intelligence: 'intrapersonal' },
-  { id: 'q33', text: 'I spend time thinking about the meaning of life and philosophical questions.', intelligence: 'intrapersonal' },
-  { id: 'q34', text: 'I can learn from my mistakes and adjust my plans.', intelligence: 'intrapersonal' },
-  { id: 'q35', text: 'I have a realistic understanding of my strengths and weaknesses.', intelligence: 'intrapersonal' },
-  { id: 'q36', text: 'I enjoy spending time outdoors in nature (gardening, hiking, camping).', intelligence: 'naturalist' },
-  { id: 'q37', text: 'I can easily identify different types of trees, birds, or flowers.', intelligence: 'naturalist' },
-  { id: 'q38', text: 'I am interested in environmental issues and conservation.', intelligence: 'naturalist' },
-  { id: 'q39', text: 'I enjoy sorting and classifying objects into different categories.', intelligence: 'naturalist' },
-  { id: 'q40', text: 'I find comfort and peace in natural settings.', intelligence: 'naturalist' },
+    // Verbal-Linguistic
+    { id: 'q1', text: 'How easily can you learn new words and integrate them into your everyday vocabulary when speaking or writing?', intelligence: 'linguistic' },
+    { id: 'q2', text: 'Do you enjoy reading a wide range of materials, such as books, magazines, and newspapers, for pleasure?', intelligence: 'linguistic' },
+    { id: 'q3', text: 'Are you skilled at explaining complex ideas clearly and concisely to others, both in writing and verbally?', intelligence: 'linguistic' },
+    { id: 'q4', text: 'Do you often enjoy word games, riddles, puns, or writing creative pieces like poems or stories?', intelligence: 'linguistic' },
+    { id: 'q5', text: 'When you need to remember information, do you find that writing it down or talking through it out loud helps the most?', intelligence: 'linguistic' },
+    
+    // Logical-Mathematical
+    { id: 'q6', text: 'Do you enjoy solving brain teasers, puzzles, or logic problems that require deductive reasoning?', intelligence: 'logicalMathematical' },
+    { id: 'q7', text: 'How comfortable are you working with abstract concepts, symbols, or numerical patterns?', intelligence: 'logicalMathematical' },
+    { id: 'q8', text: 'Do you tend to look for patterns, categories, or relationships between things in your environment?', intelligence: 'logicalMathematical' },
+    { id: 'q9', text: 'When faced with a complex problem, do you naturally break it down into smaller, sequential steps to find a solution?', intelligence: 'logicalMathematical' },
+    { id: 'q10', text: 'Do you prefer subjects in school or work that involve calculations, statistics, or scientific experimentation?', intelligence: 'logicalMathematical' },
+    
+    // Visual-Spatial
+    { id: 'q11', text: 'Can you easily read and interpret maps, charts, graphs, or diagrams?', intelligence: 'spatial' },
+    { id: 'q12', text: 'Do you enjoy activities like drawing, painting, sculpting, or graphic design?', intelligence: 'spatial' },
+    { id: 'q13', text: 'Are you good at mentally rotating an object or imagining what something would look like from a different perspective?', intelligence: 'spatial' },
+    { id: 'q14', text: 'Do you find it easy to navigate new places, or do you have a strong sense of direction?', intelligence: 'spatial' },
+    { id: 'q15', text: 'When assembling furniture or following complex instructions, do you rely more on the visual diagrams than the written text?', intelligence: 'spatial' },
+    
+    // Bodily-Kinesthetic
+    { id: 'q16', text: 'Do you learn best by doing (hands-on activities, role-playing, building) rather than by reading or listening?', intelligence: 'bodilyKinesthetic' },
+    { id: 'q17', text: 'Do you possess good physical coordination, agility, and balance, which shows up in sports, dancing, or manual skills?', intelligence: 'bodilyKinesthetic' },
+    { id: 'q18', text: 'Do you often use hand gestures, facial expressions, or other body language to communicate your thoughts and feelings?', intelligence: 'bodilyKinesthetic' },
+    { id: 'q19', text: 'Are you skilled at manipulating small objects and tools, such as in crafts, surgery, or fine motor tasks?', intelligence: 'bodilyKinesthetic' },
+    { id: 'q20', text: 'Do you feel restless or need to move around when you have to sit for long periods of time?', intelligence: 'bodilyKinesthetic' },
+    
+    // Musical
+    { id: 'q21', text: 'Can you easily remember the melody and lyrics of songs you\'ve heard only once or twice?', intelligence: 'musical' },
+    { id: 'q22', text: 'Do you have a keen sensitivity to different rhythms, tones, and patterns in your environment (e.g., distinguishing between different sounds)?', intelligence: 'musical' },
+    { id: 'q23', text: 'Do you often find yourself humming, singing, or tapping out rhythms, even when you aren\'t trying to?', intelligence: 'musical' },
+    { id: 'q24', text: 'Are you able to tell when a note is slightly off-key or when an instrument is out of tune?', intelligence: 'musical' },
+    { id: 'q25', text: 'Does listening to music significantly affect your mood or concentration for better or worse?', intelligence: 'musical' },
+    
+    // Interpersonal
+    { id: 'q26', text: 'Do people often seek you out for advice or to mediate conflicts between friends or colleagues?', intelligence: 'interpersonal' },
+    { id: 'q27', text: 'Are you good at sensing the feelings, moods, or unstated intentions of others, even when they aren\'t explicitly expressed?', intelligence: 'interpersonal' },
+    { id: 'q28', text: 'Do you enjoy working in groups or teams, and are you effective in a leadership or coordinating role?', intelligence: 'interpersonal' },
+    { id: 'q29', text: 'How comfortable are you starting conversations and building rapport with new people?', intelligence: 'interpersonal' },
+    { id: 'q30', text: 'Do you have many friends or acquaintances, and do you put effort into maintaining those relationships?', intelligence: 'interpersonal' },
+    
+    // Intrapersonal
+    { id: 'q31', text: 'Do you often spend time reflecting on your own feelings, goals, and personal motivations?', intelligence: 'intrapersonal' },
+    { id: 'q32', text: 'Are you aware of your own personal strengths and weaknesses, and do you use this knowledge to set realistic goals?', intelligence: 'intrapersonal' },
+    { id: 'q33', text: 'Do you keep a journal, write reflective essays, or engage in practices like meditation or self-analysis?', intelligence: 'intrapersonal' },
+    { id: 'q34', text: 'How well can you self-regulate your emotions, staying calm or focused when under pressure?', intelligence: 'intrapersonal' },
+    { id: 'q35', text: 'Do you prefer working alone on projects where you can set your own pace and direction?', intelligence: 'intrapersonal' },
+
+    // Naturalist
+    { id: 'q36', text: 'Do you enjoy spending time outdoors, such as hiking, gardening, or observing the environment?', intelligence: 'naturalist' },
+    { id: 'q37', text: 'Can you easily identify and categorize different types of plants, animals, rocks, or cloud formations?', intelligence: 'naturalist' },
+    { id: 'q38', text: 'Do you notice small details or changes in your natural surroundings, such as changes in the weather or seasons?', intelligence: 'naturalist' },
+    { id: 'q39', text: 'Are you interested in subjects like biology, ecology, geology, or environmental conservation?', intelligence: 'naturalist' },
+    { id: 'q40', text: 'Do you enjoy collecting and classifying objects from nature, like leaves, stones, or shells?', intelligence: 'naturalist' },
 ];
+
 
 type UserAnswers = { [key: string]: number };
 type StudentInfo = { name: string; age: number; school: string };
