@@ -12,7 +12,7 @@ import wav from 'wav';
 
 const TtsInputSchema = z.object({
   text: z.string(),
-  voiceName: z.string().optional().describe("The voice to use for TTS. E.g., 'en-US-Standard-C' for male, 'en-US-Standard-E' for female."),
+  voiceName: z.string().optional().describe("The voice to use for TTS. E.g., 'Algenib' for female, 'Achernar' for male."),
 });
 
 const TtsOutputSchema = z.object({
@@ -33,8 +33,8 @@ const ttsFlow = ai.defineFlow(
     outputSchema: TtsOutputSchema,
   },
   async (input) => {
-    // Default to a female voice if not specified
-    const voice = input.voiceName || 'en-US-Standard-E';
+    // Default to a friendly voice if not specified
+    const voice = input.voiceName || 'Algenib';
     
     const { media } = await ai.generate({
       model: googleAI.model('gemini-2.5-flash-preview-tts'),
