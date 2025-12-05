@@ -19,11 +19,15 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import VoiceSelector from './voice-selector';
 import Logo from './logo';
+import { z } from 'zod';
 
-export type ChatMessage = {
-  role: 'user' | 'model';
-  content: string;
-};
+
+const ChatMessageSchema = z.object({
+  role: z.enum(['user', 'model']),
+  content: z.string(),
+});
+
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 const INITIAL_MESSAGE: ChatMessage = {
     role: 'model',
@@ -192,8 +196,8 @@ export default function Chatbot() {
               {messages.map((message, index) => (
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>
                   {message.role === 'model' && (
-                    <Avatar className="w-8 h-8 border bg-background flex items-center justify-center">
-                       <div className="w-6 h-6"><Logo /></div>
+                    <Avatar className="w-6 h-6 border bg-background flex items-center justify-center">
+                       <div className="w-4 h-4"><Logo /></div>
                     </Avatar>
                   )}
                   <div
@@ -215,8 +219,8 @@ export default function Chatbot() {
               ))}
               {isPending && (
                 <div className="flex items-start gap-3">
-                  <Avatar className="w-8 h-8 border bg-background flex items-center justify-center">
-                     <div className="w-6 h-6"><Logo /></div>
+                  <Avatar className="w-6 h-6 border bg-background flex items-center justify-center">
+                     <div className="w-4 h-4"><Logo /></div>
                   </Avatar>
                   <div className="rounded-lg px-4 py-2 bg-muted flex items-center">
                     <Loader2 className="h-5 w-5 animate-spin" />

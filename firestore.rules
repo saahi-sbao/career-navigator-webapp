@@ -90,6 +90,26 @@ service cloud.firestore {
       return request.resource.data.userId == resource.data.userId && request.resource.data.id == resource.data.id;
     }
 
+    /**
+     * Validates a new study log entry.
+     */
+    function isCreatingValidStudyLog(userId, studyLogId) {
+        let data = request.resource.data;
+        return data.userId == userId && data.id == studyLogId &&
+               data.subject is string && data.subject.size() > 0 &&
+               data.date is timestamp &&
+               data.duration is number && data.duration > 0;
+    }
+
+    /**
+     * Validates an update to a study log entry.
+     */
+    function isUpdatingValidStudyLog() {
+        let data = request.resource.data;
+        return data.userId == resource.data.userId &&
+               data.id == resource.data.id;
+    }
+
     // ------------------------------------------------------------------------
     // Collection Rules
     // ------------------------------------------------------------------------
@@ -108,6 +128,17 @@ service cloud.firestore {
       allow create: if isOwner(userId) && isCreatingValidUserDocument(userId);
       allow update: if isExistingOwner(userId) && isUpdatingValidUserDocument();
       allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Secures the study log entries for a specific user.
+       * @path /users/{userId}/studyLogs/{studyLogId}
+       */
+      match /studyLogs/{studyLogId} {
+        allow read, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isCreatingValidStudyLog(userId, studyLogId);
+        allow update: if isExistingOwner(userId) && isUpdatingValidStudyLog();
+        allow delete: if isExistingOwner(userId);
+      }
     }
 
     /**

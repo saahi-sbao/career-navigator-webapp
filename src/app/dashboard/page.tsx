@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, User, CheckCircle, ArrowRight, BookOpen, Users, Star } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import TimeTable from '@/components/time-table';
 
 
 export default function DashboardPage() {
@@ -95,6 +96,8 @@ export default function DashboardPage() {
                         )}
                     </CardContent>
                 </Card>
+
+                {hasCompletedAssessment && userData && <TimeTable user={user} pathway={userData.assessment.recommendation.pathway} />}
 
                 <Card>
                     <CardHeader>

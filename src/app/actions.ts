@@ -2,15 +2,44 @@
 'use server';
 
 import { getPersonalizedCareerSuggestions } from '@/ai/flows/personalized-career-suggestions';
+import { getStudyRecommendations } from '@/ai/flows/study-recommendations';
 import { generateChatResponse } from '@/ai/flows/chat';
 import { generateAudio } from '@/ai/flows/tts';
 import { generateAvatar } from '@/ai/flows/generate-avatar';
 import { z } from 'zod';
-import type { ChatMessage } from '@/components/chatbot';
 
+// Define schemas locally in the actions file
 const SuggestionsSchema = z.object({
   interests: z.array(z.string()),
 });
+
+const StudyRecsSchema = z.object({
+    pathway: z.string(),
+    studyLogs: z.array(z.object({
+        subject: z.string(),
+        duration: z.number(),
+        date: z.string(),
+    })),
+});
+
+const ChatMessageSchema = z.object({
+  role: z.enum(['user', 'model']),
+  content: z.string(),
+});
+
+const ChatSchema = z.object({
+  messages: z.array(ChatMessageSchema),
+});
+
+const TtsSchema = z.object({
+  text: z.string(),
+  voiceName: z.string().optional(),
+});
+
+const AvatarSchema = z.object({
+    prompt: z.string(),
+});
+
 
 export async function fetchSuggestionsAction(data: { interests: string[] }) {
   try {
@@ -26,14 +55,21 @@ export async function fetchSuggestionsAction(data: { interests: string[] }) {
   }
 }
 
-const ChatSchema = z.object({
-  messages: z.array(z.object({
-    role: z.enum(['user', 'model']),
-    content: z.string(),
-  })),
-});
+export async function fetchStudyRecommendationsAction(data: z.infer<typeof StudyRecsSchema>) {
+    try {
+        const validatedData = StudyRecsSchema.parse(data);
+        const result = await getStudyRecommendations(validatedData);
+        return { success: true, recommendations: result.recommendations };
+    } catch (error) {
+        console.error('Error fetching study recommendations:', error);
+        if (error instanceof z.ZodError) {
+            return { success: false, error: 'Invalid input for study recommendations.' };
+        }
+        return { success: false, error: 'An unexpected error occurred while fetching study recommendations.' };
+    }
+}
 
-export async function generateChatResponseAction(data: { messages: ChatMessage[] }) {
+export async function generateChatResponseAction(data: { messages: z.infer<typeof ChatMessageSchema>[] }) {
   try {
     const validatedData = ChatSchema.parse(data);
     const result = await generateChatResponse({ messages: validatedData.messages });
@@ -46,11 +82,6 @@ export async function generateChatResponseAction(data: { messages: ChatMessage[]
     return { success: false, error: 'An unexpected error occurred while generating chat response.' };
   }
 }
-
-const TtsSchema = z.object({
-  text: z.string(),
-  voiceName: z.string().optional(),
-});
 
 export async function generateAudioAction(data: { text: string, voiceName?: string }) {
   try {
@@ -65,10 +96,6 @@ export async function generateAudioAction(data: { text: string, voiceName?: stri
     return { success: false, error: 'An unexpected error occurred while generating audio.' };
   }
 }
-
-const AvatarSchema = z.object({
-    prompt: z.string(),
-});
 
 export async function generateAvatarAction(data: { prompt: string }) {
     try {

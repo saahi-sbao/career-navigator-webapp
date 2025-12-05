@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -5,12 +6,6 @@
  *
  * This file defines a Genkit flow that takes a user's career interests
  * and generates personalized career suggestions based on those interests.
- *
- * @exports {
- *   getPersonalizedCareerSuggestions,
- *   PersonalizedCareerSuggestionsInput,
- *   PersonalizedCareerSuggestionsOutput,
- * }
  */
 
 import {ai} from '@/ai/genkit';
@@ -22,7 +17,7 @@ const PersonalizedCareerSuggestionsInputSchema = z.object({
     .array(z.string())
     .describe("The user's saved career interests."),
 });
-export type PersonalizedCareerSuggestionsInput = z.infer<
+type PersonalizedCareerSuggestionsInput = z.infer<
   typeof PersonalizedCareerSuggestionsInputSchema
 >;
 
@@ -32,7 +27,7 @@ const PersonalizedCareerSuggestionsOutputSchema = z.object({
     .array(z.string())
     .describe('A list of personalized career suggestions.'),
 });
-export type PersonalizedCareerSuggestionsOutput = z.infer<
+type PersonalizedCareerSuggestionsOutput = z.infer<
   typeof PersonalizedCareerSuggestionsOutputSchema
 >;
 

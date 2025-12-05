@@ -24,8 +24,8 @@ const ChatOutputSchema = z.object({
   response: z.string(),
 });
 
-export type ChatInput = z.infer<typeof ChatInputSchema>;
-export type ChatOutput = z.infer<typeof ChatOutputSchema>;
+type ChatInput = z.infer<typeof ChatInputSchema>;
+type ChatOutput = z.infer<typeof ChatOutputSchema>;
 
 export async function generateChatResponse(input: ChatInput): Promise<ChatOutput> {
   return chatFlow(input);

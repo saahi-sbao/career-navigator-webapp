@@ -19,8 +19,8 @@ const TtsOutputSchema = z.object({
   audio: z.string().describe('Base64 encoded WAV audio data URI.'),
 });
 
-export type TtsInput = z.infer<typeof TtsInputSchema>;
-export type TtsOutput = z.infer<typeof TtsOutputSchema>;
+type TtsInput = z.infer<typeof TtsInputSchema>;
+type TtsOutput = z.infer<typeof TtsOutputSchema>;
 
 export async function generateAudio(input: TtsInput): Promise<TtsOutput> {
   return ttsFlow(input);

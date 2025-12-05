@@ -135,6 +135,20 @@
             }
         },
         "required": ["id", "name", "email", "county"]
+    },
+    "StudyLog": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "StudyLog",
+        "type": "object",
+        "description": "Represents a single study session logged by a student.",
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "subject": { "type": "string" },
+          "date": { "type": "string", "format": "date-time" },
+          "duration": { "type": "number", "description": "Duration in minutes" }
+        },
+        "required": ["id", "userId", "subject", "date", "duration"]
     }
   },
   "auth": {
@@ -181,6 +195,18 @@
               "description": "The unique identifier for the career interest."
             }
           ]
+        }
+      },
+      {
+        "path": "/users/{userId}/studyLogs/{studyLogId}",
+        "definition": {
+            "entityName": "StudyLog",
+            "schema": { "$ref": "#/backend/entities/StudyLog" },
+            "description": "Stores a user's study log entries.",
+            "params": [
+                { "name": "userId", "description": "The user's ID." },
+                { "name": "studyLogId", "description": "The study log entry's ID." }
+            ]
         }
       },
       {

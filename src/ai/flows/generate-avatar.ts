@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -16,8 +17,8 @@ const AvatarOutputSchema = z.object({
   imageUrl: z.string().describe('The data URI of the generated avatar image.'),
 });
 
-export type AvatarInput = z.infer<typeof AvatarInputSchema>;
-export type AvatarOutput = z.infer<typeof AvatarOutputSchema>;
+type AvatarInput = z.infer<typeof AvatarInputSchema>;
+type AvatarOutput = z.infer<typeof AvatarOutputSchema>;
 
 export async function generateAvatar(input: AvatarInput): Promise<AvatarOutput> {
   return generateAvatarFlow(input);
