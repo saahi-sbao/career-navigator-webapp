@@ -86,25 +86,20 @@ export default function AdminDashboardPage() {
     if (!firestore) return;
     setIsSubmitting(true);
 
-    try {
-        const mentorId = editingMentor?.id || doc(collection(firestore, 'mentors')).id;
-        const mentorData = { ...data, id: mentorId };
-        const mentorRef = doc(firestore, 'mentors', mentorId);
-        setDocumentNonBlocking(mentorRef, mentorData, { merge: true });
-        toast({
-            title: editingMentor ? 'Mentor Updated' : 'Mentor Added',
-            description: `${data.name} has been successfully saved.`,
-        });
-        setIsDialogOpen(false);
-    } catch (error: any) {
-        toast({
-            variant: 'destructive',
-            title: 'An error occurred',
-            description: error.message || 'Could not save mentor details.',
-        });
-    } finally {
-        setIsSubmitting(false);
-    }
+    
+    const mentorId = editingMentor?.id || doc(collection(firestore, 'mentors')).id;
+    const mentorData = { ...data, id: mentorId };
+    const mentorRef = doc(firestore, 'mentors', mentorId);
+    
+    setDocumentNonBlocking(mentorRef, mentorData, { merge: true });
+    
+    toast({
+        title: editingMentor ? 'Mentor Updated' : 'Mentor Added',
+        description: `${data.name} has been successfully saved.`,
+    });
+    
+    setIsDialogOpen(false);
+    setIsSubmitting(false);
   };
 
   const handleDelete = async (mentor: Mentor) => {
