@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useAdmin } from '@/hooks/use-admin';
 import { useRouter } from 'next/navigation';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, doc, deleteDoc } from 'firebase/firestore';
+import { collection, query, doc } from 'firebase/firestore';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -105,21 +105,13 @@ export default function ManageMentorsPage() {
       return;
     }
     
-    try {
-        const mentorRef = doc(firestore, 'mentors', mentor.id);
-        deleteDocumentNonBlocking(mentorRef);
-        
-        toast({
-            title: 'Mentor Deleted',
-            description: `${mentor.name} has been removed.`,
-        });
-    } catch(error: any) {
-         toast({
-            variant: 'destructive',
-            title: 'Deletion Failed',
-            description: error.message || 'Could not delete mentor.',
-        });
-    }
+    const mentorRef = doc(firestore, 'mentors', mentor.id);
+    deleteDocumentNonBlocking(mentorRef);
+    
+    toast({
+        title: 'Mentor Deleted',
+        description: `${mentor.name} has been removed.`,
+    });
   };
   
   if (isAdminLoading || !isAdmin) {

@@ -25,7 +25,7 @@ export default function AdminDashboardPage() {
   const firestore = useFirestore();
 
   const usersQuery = useMemoFirebase(
-    () => (isAdmin ? query(collection(firestore, 'users')) : null),
+    () => (isAdmin && firestore ? query(collection(firestore, 'users')) : null),
     [isAdmin, firestore]
   );
   const { data: users, isLoading: usersLoading } = useCollection(usersQuery);
@@ -63,7 +63,7 @@ export default function AdminDashboardPage() {
     }));
   }, [assessmentData]);
 
-  if (isAdminLoading || usersLoading) {
+  if (isAdminLoading || (isAdmin && usersLoading)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-16 w-16 animate-spin" />
