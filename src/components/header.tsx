@@ -19,6 +19,12 @@ export default function Header() {
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link
+              href="/dashboard"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Dashboard
+            </Link>
+            <Link
               href="/assessment"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
