@@ -87,6 +87,7 @@ export default function AdminDashboardPage() {
     
     try {
       if (editingMentor) {
+        // Editing an existing mentor
         const mentorRef = doc(firestore, 'mentors', editingMentor.id);
         await setDoc(mentorRef, data, { merge: true });
         toast({
@@ -94,9 +95,10 @@ export default function AdminDashboardPage() {
             description: `${data.name} has been successfully updated.`,
         });
       } else {
+        // Adding a new mentor
         const mentorCollection = collection(firestore, 'mentors');
-        const newDocRef = doc(mentorCollection);
-        await setDoc(newDocRef, { ...data, id: newDocRef.id });
+        const newDocRef = doc(mentorCollection); // Create a new doc with a generated ID
+        await setDoc(newDocRef, { ...data, id: newDocRef.id }); // Explicitly set the ID in the document
         toast({
             title: 'Mentor Added',
             description: `${data.name} has been successfully added.`,
@@ -342,3 +344,4 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
+    
