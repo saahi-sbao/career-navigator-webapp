@@ -160,88 +160,35 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Stores user profiles.  Uses path-based ownership for simplified security rules.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            }
-          ]
-        }
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
       },
-      {
-        "path": "/users/{userId}/careerInterests/{careerInterestId}",
-        "definition": {
-          "entityName": "CareerInterest",
-          "schema": {
-            "$ref": "#/backend/entities/CareerInterest"
-          },
-          "description": "Stores career interests for each user. Includes denormalized 'userId' for authorization independence.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "careerInterestId",
-              "description": "The unique identifier for the career interest."
-            }
-          ]
-        }
+      "description": "Stores user profiles. Uses path-based ownership for simplified security rules."
+    },
+    "/users/{userId}/careerInterests/{careerInterestId}": {
+      "schema": {
+        "$ref": "#/entities/CareerInterest"
       },
-      {
-        "path": "/users/{userId}/studyLogs/{studyLogId}",
-        "definition": {
-            "entityName": "StudyLog",
-            "schema": { "$ref": "#/backend/entities/StudyLog" },
-            "description": "Stores a user's study log entries.",
-            "params": [
-                { "name": "userId", "description": "The user's ID." },
-                { "name": "studyLogId", "description": "The study log entry's ID." }
-            ]
-        }
+      "description": "Stores career interests for each user. Includes denormalized 'userId' for authorization independence."
+    },
+    "/users/{userId}/studyLogs/{studyLogId}": {
+      "schema": {
+        "$ref": "#/entities/StudyLog"
       },
-      {
-        "path": "/roles_admin/{userId}",
-        "definition": {
-          "entityName": "AdminUser",
-          "schema": {
-            "$ref": "#/backend/entities/AdminUser"
-          },
-          "description": "Collection to store admin users.  The existence of a document grants admin privileges. Uses existence over content.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the admin user."
-            }
-          ]
-        }
+      "description": "Stores a user's study log entries."
+    },
+    "/roles_admin/{userId}": {
+      "schema": {
+        "$ref": "#/entities/AdminUser"
       },
-      {
-          "path": "/mentors/{mentorId}",
-          "definition": {
-              "entityName": "Mentor",
-              "schema": {
-                  "$ref": "#/backend/entities/Mentor"
-              },
-              "description": "Stores mentor profiles. Editable only by admins, but viewable by all authenticated users.",
-              "params": [
-                  {
-                      "name": "mentorId",
-                      "description": "The unique identifier for the mentor."
-                  }
-              ]
-          }
-      }
-    ],
-    "reasoning": "This Firestore structure prioritizes authorization independence and simplifies security rules. It leverages path-based ownership for user-specific data and a dedicated collection for admin roles, avoiding complex `get()` calls in security rules. Denormalization is used to ensure authorization independence. Specifically, the `CareerInterest` documents contain a `userId` field, which is a denormalized attribute from the `User` document. This allows us to enforce security rules on `CareerInterest` documents without needing to `get()` the `User` document. This promotes atomic operations and simplifies debugging. The `roles_admin` collection supports the admin panel requirement. The `/mentors` collection is added to store mentor profiles, with rules ensuring only admins can manage the data while all authenticated users can read it. The structure supports QAPs. User-owned data is segregated under the `/users/{userId}` path, allowing for secure `list` operations based on user ID.  Admin privileges are determined by the existence of a document in the `/roles_admin/{uid}` collection. This approach, known as Existence over Content, simplifies rule logic."
+      "description": "Collection to store admin users. The existence of a document grants admin privileges. Uses existence over content."
+    },
+    "/mentors/{mentorId}": {
+      "schema": {
+        "$ref": "#/entities/Mentor"
+      },
+      "description": "Stores mentor profiles. Editable only by admins, but viewable by all authenticated users."
+    }
   }
 }
