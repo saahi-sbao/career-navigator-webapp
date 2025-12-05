@@ -97,7 +97,7 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
 
-                {hasCompletedAssessment && userData && <TimeTable user={user} pathway={userData.assessment.recommendation.pathway} />}
+                {hasCompletedAssessment && userData?.assessment && <TimeTable user={user} pathway={userData.assessment.recommendation.pathway} />}
 
                 <Card>
                     <CardHeader>

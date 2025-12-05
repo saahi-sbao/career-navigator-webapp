@@ -48,11 +48,12 @@ export default function Chatbot() {
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when new messages are added
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
+    if (viewportRef.current) {
+        viewportRef.current.scrollTo({ top: viewportRef.current.scrollHeight, behavior: 'smooth' });
     }
   }, [messages]);
 
@@ -88,8 +89,13 @@ export default function Chatbot() {
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if(open && messages.length === 1) {
-        setMessages([INITIAL_MESSAGE]);
+    if(open && messages.length <= 1) { // Only send initial greeting logic if no conversation started
+        startTransition(async () => {
+            const result = await generateChatResponseAction({ messages: [{ role: 'user', content: 'Hello' }] });
+            if (result.success && result.response) {
+                setMessages([{ role: 'model', content: result.response as string }]);
+            }
+        });
     }
     // Stop any playing audio when dialog is closed
     if (!open && audioRef.current) {
@@ -172,7 +178,7 @@ export default function Chatbot() {
   return (
     <>
       <Button
-        className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
+        className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-50"
         onClick={() => handleOpenChange(true)}
       >
         <Bot className="h-8 w-8" />
@@ -191,7 +197,7 @@ export default function Chatbot() {
               </div>
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="flex-grow px-6" ref={scrollAreaRef}>
+          <ScrollArea className="flex-grow px-6" ref={scrollAreaRef} viewportRef={viewportRef}>
             <div className="space-y-4 pr-4 py-4">
               {messages.map((message, index) => (
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>

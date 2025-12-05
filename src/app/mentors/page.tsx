@@ -118,14 +118,14 @@ export default function MentorsPage() {
                     </p>
                 </div>
                 {renderContent()}
+                 {isAdmin && (
+                    <Button asChild className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg z-50" aria-label="Add Mentor">
+                        <Link href="/admin">
+                            <Plus className="h-8 w-8" />
+                        </Link>
+                    </Button>
+                )}
             </main>
-            {isAdmin && (
-                <Button asChild className="fixed bottom-24 right-6 h-16 w-16 rounded-full shadow-lg z-50" aria-label="Add Mentor">
-                    <Link href="/admin">
-                        <Plus className="h-8 w-8" />
-                    </Link>
-                </Button>
-            )}
         </div>
     );
 }

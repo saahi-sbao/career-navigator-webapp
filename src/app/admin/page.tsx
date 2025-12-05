@@ -3,9 +3,9 @@
 import { useAdmin } from '@/hooks/use-admin';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { Loader2, Users, Briefcase, GraduationCap, PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { Loader2, Users, GraduationCap, PlusCircle, Edit, Trash2 } from 'lucide-react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, doc } from 'firebase/firestore';
+import { collection, query, doc, addDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import Header from '@/components/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -19,7 +19,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogC
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { setDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 // --- Zod Schema for Mentor Form ---
 const mentorSchema = z.object({
@@ -83,36 +82,57 @@ export default function AdminDashboardPage() {
   };
 
   const onMentorSubmit: SubmitHandler<MentorFormValues> = async (data) => {
-    if (!firestore) return;
+    if (!firestore || !isAdmin) return;
     setIsSubmitting(true);
-
     
-    const mentorId = editingMentor?.id || doc(collection(firestore, 'mentors')).id;
-    const mentorData = { ...data, id: mentorId };
-    const mentorRef = doc(firestore, 'mentors', mentorId);
-    
-    setDocumentNonBlocking(mentorRef, mentorData, { merge: true });
-    
-    toast({
-        title: editingMentor ? 'Mentor Updated' : 'Mentor Added',
-        description: `${data.name} has been successfully saved.`,
-    });
-    
-    setIsDialogOpen(false);
-    setIsSubmitting(false);
+    try {
+      if (editingMentor) {
+        const mentorRef = doc(firestore, 'mentors', editingMentor.id);
+        await setDoc(mentorRef, data, { merge: true });
+        toast({
+            title: 'Mentor Updated',
+            description: `${data.name} has been successfully updated.`,
+        });
+      } else {
+        const mentorCollection = collection(firestore, 'mentors');
+        const newDocRef = doc(mentorCollection);
+        await setDoc(newDocRef, { ...data, id: newDocRef.id });
+        toast({
+            title: 'Mentor Added',
+            description: `${data.name} has been successfully added.`,
+        });
+      }
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'An error occurred',
+            description: error.message,
+        });
+    } finally {
+        setIsDialogOpen(false);
+        setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async (mentor: Mentor) => {
-    if (!firestore) return;
+    if (!firestore || !isAdmin) return;
     if (!confirm(`Are you sure you want to delete ${mentor.name}? This action cannot be undone.`)) {
       return;
     }
-    const mentorRef = doc(firestore, 'mentors', mentor.id);
-    deleteDocumentNonBlocking(mentorRef);
-    toast({
-        title: 'Mentor Deleted',
-        description: `${mentor.name} has been removed.`,
-    });
+    try {
+        const mentorRef = doc(firestore, 'mentors', mentor.id);
+        await deleteDoc(mentorRef);
+        toast({
+            title: 'Mentor Deleted',
+            description: `${mentor.name} has been removed.`,
+        });
+    } catch (error: any) {
+         toast({
+            variant: 'destructive',
+            title: 'An error occurred',
+            description: error.message,
+        });
+    }
   };
 
   const assessmentData = useMemo(() => {
@@ -142,16 +162,12 @@ export default function AdminDashboardPage() {
     }));
   }, [assessmentData]);
 
-  if (isAdminLoading || (isAdmin && (usersLoading || mentorsLoading))) {
+  if (isAdminLoading || !isAdmin) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-16 w-16 animate-spin" />
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    return null;
   }
   
   const totalAssessments = assessmentData.length;
@@ -193,16 +209,18 @@ export default function AdminDashboardPage() {
             <CardTitle>Dominant Intelligence Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={intelligenceCounts}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="students" fill="hsl(var(--primary))" />
-              </BarChart>
-            </ResponsiveContainer>
+            {usersLoading ? <div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={intelligenceCounts}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="students" fill="hsl(var(--primary))" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
@@ -211,26 +229,28 @@ export default function AdminDashboardPage() {
             <CardTitle>Student Assessment Results</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student Name</TableHead>
-                  <TableHead>Recommended Pathway</TableHead>
-                  <TableHead>Dominant Intelligence</TableHead>
-                  <TableHead className="text-right">Confidence</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {assessmentData.map(data => (
-                  <TableRow key={data.id}>
-                    <TableCell>{data.name}</TableCell>
-                    <TableCell>{data.pathway}</TableCell>
-                    <TableCell>{formatIntelligenceName(data.dominantIntelligence)}</TableCell>
-                    <TableCell className="text-right">{data.confidence}%</TableCell>
+            {usersLoading ? <div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Student Name</TableHead>
+                    <TableHead>Recommended Pathway</TableHead>
+                    <TableHead>Dominant Intelligence</TableHead>
+                    <TableHead className="text-right">Confidence</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {assessmentData.map(data => (
+                    <TableRow key={data.id}>
+                      <TableCell>{data.name}</TableCell>
+                      <TableCell>{data.pathway}</TableCell>
+                      <TableCell>{formatIntelligenceName(data.dominantIntelligence)}</TableCell>
+                      <TableCell className="text-right">{data.confidence}%</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
 
@@ -246,35 +266,37 @@ export default function AdminDashboardPage() {
             </Button>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>County</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mentors?.map((mentor) => (
-                  <TableRow key={mentor.id}>
-                    <TableCell className="font-medium">{mentor.name}</TableCell>
-                    <TableCell>{mentor.email}</TableCell>
-                    <TableCell>{mentor.phone || 'N/A'}</TableCell>
-                    <TableCell>{mentor.county}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openDialog(mentor)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(mentor)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+            {mentorsLoading ? <div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>County</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {mentors?.map((mentor) => (
+                    <TableRow key={mentor.id}>
+                      <TableCell className="font-medium">{mentor.name}</TableCell>
+                      <TableCell>{mentor.email}</TableCell>
+                      <TableCell>{mentor.phone || 'N/A'}</TableCell>
+                      <TableCell>{mentor.county}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" onClick={() => openDialog(mentor)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(mentor)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </main>
