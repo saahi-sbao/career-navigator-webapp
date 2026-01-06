@@ -46,7 +46,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <h3 className="text-lg font-semibold">Email</h3>
-                                <p className="text-muted-foreground">support@careernavigator.app</p>
+                                <p className="text-muted-foreground">sadiq14526@gmail.com</p>
                             </div>
                         </div>
                     </div>
