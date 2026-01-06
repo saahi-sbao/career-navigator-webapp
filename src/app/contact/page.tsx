@@ -28,8 +28,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <h3 className="text-lg font-semibold">Our Location</h3>
-                                <p className="text-muted-foreground">AGIP House, Dodoma Street</p>
-                                <p className="text-muted-foreground">P.O. Box 41733-00100, Nairobi, Kenya</p>
+                                <p className="text-muted-foreground">Mombasa, Kisimani</p>
                             </div>
                         </div>
                          <div className="flex items-start gap-4">
@@ -38,7 +37,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <h3 className="text-lg font-semibold">Phone Number</h3>
-                                <p className="text-muted-foreground">(+254) 722 000 000</p>
+                                <p className="text-muted-foreground">0117448455</p>
                             </div>
                         </div>
                          <div className="flex items-start gap-4">
