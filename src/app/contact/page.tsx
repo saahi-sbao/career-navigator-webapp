@@ -1,3 +1,4 @@
+
 import Header from '@/components/header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -5,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
-export default function SupportPage() {
+export default function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -13,7 +14,7 @@ export default function SupportPage() {
         <div className="mx-auto max-w-2xl">
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-extrabold">Contact Support</CardTitle>
+            <CardTitle className="text-3xl font-extrabold">Contact Us</CardTitle>
             <CardDescription>
               Have questions or need technical help? Fill out the form below.
             </CardDescription>
