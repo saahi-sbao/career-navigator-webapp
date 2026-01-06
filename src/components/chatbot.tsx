@@ -44,7 +44,6 @@ export default function Chatbot() {
   const [audioQueue, setAudioQueue] = useState<HTMLAudioElement[]>([]);
   const [voice, setVoice] = useState('Algenib'); // Default to a valid human voice
 
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
@@ -197,7 +196,7 @@ export default function Chatbot() {
               </div>
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="flex-grow px-6" ref={scrollAreaRef} viewportRef={viewportRef}>
+          <ScrollArea className="flex-grow px-6" viewportRef={viewportRef}>
             <div className="space-y-4 pr-4 py-4">
               {messages.map((message, index) => (
                 <div key={index} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : '')}>
