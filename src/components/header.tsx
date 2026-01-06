@@ -1,3 +1,4 @@
+
 import { ThemeToggle } from './theme-toggle';
 import AuthButton from './auth-button';
 import Logo from './logo';
@@ -19,6 +20,24 @@ export default function Header() {
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link
+              href="/#home"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Home
+            </Link>
+            <Link
+              href="/#features"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Features
+            </Link>
+             <Link
+              href="/#faq"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              FAQ
+            </Link>
+            <Link
               href="/dashboard"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
@@ -29,12 +48,6 @@ export default function Header() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               Assessment
-            </Link>
-            <Link
-              href="/#career-fields"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Careers
             </Link>
             <Link
               href="/mentors"
@@ -53,12 +66,6 @@ export default function Header() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               About
-            </Link>
-            <Link
-              href="/support"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Support
             </Link>
           </nav>
         </div>
