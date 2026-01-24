@@ -6,6 +6,7 @@ import { getStudyRecommendations } from '@/ai/flows/study-recommendations';
 import { generateChatResponse } from '@/ai/flows/chat';
 import { generateAudio } from '@/ai/flows/tts';
 import { generateAvatar } from '@/ai/flows/generate-avatar';
+import { generateStory } from '@/ai/flows/story-generator';
 import { z } from 'zod';
 
 // Define schemas locally in the actions file
@@ -37,6 +38,10 @@ const TtsSchema = z.object({
 });
 
 const AvatarSchema = z.object({
+    prompt: z.string(),
+});
+
+const StorySchema = z.object({
     prompt: z.string(),
 });
 
@@ -108,5 +113,19 @@ export async function generateAvatarAction(data: { prompt: string }) {
             return { success: false, error: 'Invalid prompt format for avatar generation.' };
         }
         return { success: false, error: 'An unexpected error occurred while generating the avatar.' };
+    }
+}
+
+export async function generateStoryAction(data: { prompt: string }) {
+    try {
+        const validatedData = StorySchema.parse(data);
+        const result = await generateStory(validatedData);
+        return { success: true, story: result.story };
+    } catch (error) {
+        console.error('Error generating story:', error);
+        if (error instanceof z.ZodError) {
+            return { success: false, error: 'Invalid prompt for story generation.' };
+        }
+        return { success: false, error: 'An unexpected error occurred while generating the story.' };
     }
 }

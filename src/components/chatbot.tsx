@@ -88,14 +88,6 @@ export default function Chatbot() {
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if(open && messages.length <= 1) { // Only send initial greeting logic if no conversation started
-        startTransition(async () => {
-            const result = await generateChatResponseAction({ messages: [{ role: 'user', content: 'Hello' }] });
-            if (result.success && result.response) {
-                setMessages([{ role: 'model', content: result.response as string }]);
-            }
-        });
-    }
     // Stop any playing audio when dialog is closed
     if (!open && audioRef.current) {
       audioRef.current.pause();
