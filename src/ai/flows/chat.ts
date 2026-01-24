@@ -40,18 +40,25 @@ const chatFlow = ai.defineFlow(
   async (input) => {
     const { messages } = input;
     
-    // Construct the prompt with history
-    const history = messages.map(msg => ({ role: msg.role, content: [{ text: msg.content }] }));
+    // The history should include all messages *except* the last one, which is the current prompt.
+    const history = messages.slice(0, -1).map(msg => ({ role: msg.role, content: [{ text: msg.content }] }));
+    const lastMessage = messages[messages.length - 1];
+
+    if (lastMessage.role !== 'user') {
+      return { response: "I'm sorry, I can only respond to user messages." };
+    }
 
     const { output } = await ai.generate({
-        system: `You are a helpful, knowledgeable, and friendly career guidance assistant for the "Career Builder & Explorer (CBE)" application. Your personality should be like Google's Gemini - professional, yet approachable and encouraging. Your primary audience is students and teachers in Kenya.
+        system: `You are a helpful, knowledgeable, and friendly career guidance assistant for the "Career Builder & Explorer (CBE)" application. Your personality should be professional, yet approachable and encouraging, similar to Google's Gemini. Your primary audience is students and teachers in Kenya.
 
 Your main goals are:
-1.  Answer questions clearly and concisely about careers, required subjects, and educational pathways.
+1.  Answer questions clearly and concisely about careers, required subjects, and educational pathways relevant to the Kenyan context.
 2.  Provide insightful and encouraging guidance to users exploring their future options.
 3.  Maintain a positive and supportive tone at all times.
-4.  When asked about topics outside of career guidance, gently steer the conversation back to your purpose.`,
-      prompt: messages[messages.length -1].content,
+4.  When asked about topics outside of career guidance, gently steer the conversation back to your purpose.
+5.  Use markdown for formatting to improve readability. For example, use lists for steps, bolding for key terms, and appropriate spacing.
+6.  Keep your answers focused and not overly long. Provide actionable information where possible.`,
+      prompt: lastMessage.content,
       history,
     });
 
