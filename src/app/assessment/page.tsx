@@ -217,8 +217,8 @@ export default function AssessmentPage() {
                 const weight = path.requiredIntelligences[mi as keyof typeof path.requiredIntelligences];
                 const studentScore = miScores[mi] || 0;
                 
-                matchScore += (studentScore / 100) * (weight ?? 0);
-                totalWeight += (weight ?? 0);
+                matchScore += (studentScore / 100) * weight;
+                totalWeight += weight;
             }
 
             const normalizedMatchScore = totalWeight > 0 ? matchScore / totalWeight : 0;
@@ -227,10 +227,10 @@ export default function AssessmentPage() {
                 highestMatchScore = normalizedMatchScore;
                 bestMatch = path;
             } else if (normalizedMatchScore === highestMatchScore && bestMatch) {
-                const primaryMI = Object.keys(path.requiredIntelligences??).sort((a,b) => path.requiredIntelligences??[b as keyof typeof path.requiredIntelligences??] - path.requiredIntelligences??[a as keyof typeof path.requiredIntelligences??])[0];
+                const primaryMI = Object.keys(path.requiredIntelligences).sort((a,b) => (path.requiredIntelligences as any)[b] - (path.requiredIntelligences as any)[a])[0];
                 const currentPrimaryScore = miScores[primaryMI] || 0;
                 
-                const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences??).sort((a,b) => bestMatch.requiredIntelligences??[b as keyof typeof bestMatch.requiredIntelligences??] - bestMatch.requiredIntelligences??[a as keyof typeof bestMatch.requiredIntelligences??])[0];
+                const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences).sort((a,b) => (bestMatch.requiredIntelligences as any)[b] - (bestMatch.requiredIntelligences as any)[a])[0];
                 const bestPrimaryScore = miScores[bestPrimaryMI] || 0;
 
                 if (currentPrimaryScore > bestPrimaryScore) {
@@ -617,3 +617,5 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         </Card>
     );
 };
+
+    
