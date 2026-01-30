@@ -6,7 +6,6 @@ import ClientLayout from '@/components/client-layout';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import { ThemeProvider } from '@/components/theme-provider';
-import Chatbot from '@/components/chatbot';
 
 
 const fontSans = FontSans({
@@ -79,7 +78,6 @@ export default function RootLayout({
         >
           <FirebaseClientProvider>
             <ClientLayout>{children}</ClientLayout>
-            <Chatbot />
             <Toaster />
           </FirebaseClientProvider>
         </ThemeProvider>

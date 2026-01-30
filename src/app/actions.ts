@@ -3,8 +3,6 @@
 
 import { getPersonalizedCareerSuggestions } from '@/ai/flows/personalized-career-suggestions';
 import { getStudyRecommendations } from '@/ai/flows/study-recommendations';
-import { generateChatResponse } from '@/ai/flows/chat';
-import { generateAudio } from '@/ai/flows/tts';
 import { generateAvatar } from '@/ai/flows/generate-avatar';
 import { generateStory } from '@/ai/flows/story-generator';
 import { getSubjectCombinationSuggestions, type SubjectCombinationOutput } from '@/ai/flows/subject-combination-flow';
@@ -22,20 +20,6 @@ const StudyRecsSchema = z.object({
         duration: z.number(),
         date: z.string(),
     })),
-});
-
-const ChatMessageSchema = z.object({
-  role: z.enum(['user', 'model']),
-  content: z.string(),
-});
-
-const ChatSchema = z.object({
-  messages: z.array(ChatMessageSchema),
-});
-
-const TtsSchema = z.object({
-  text: z.string(),
-  voiceName: z.string().optional(),
 });
 
 const AvatarSchema = z.object({
@@ -75,32 +59,6 @@ export async function fetchStudyRecommendationsAction(data: z.infer<typeof Study
         }
         return { success: false, error: 'An unexpected error occurred while fetching study recommendations.' };
     }
-}
-
-export async function generateChatResponseAction(data: { messages: z.infer<typeof ChatMessageSchema>[] }) {
-  try {
-    const validatedData = ChatSchema.parse(data);
-    const result = await generateChatResponse({ messages: validatedData.messages });
-    return { success: true, response: result.response };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return { success: false, error: 'Invalid chat message format.' };
-    }
-    return { success: false, error: 'An unexpected error occurred while generating chat response.' };
-  }
-}
-
-export async function generateAudioAction(data: { text: string, voiceName?: string }) {
-  try {
-    const validatedData = TtsSchema.parse(data);
-    const result = await generateAudio({ text: validatedData.text, voiceName: validatedData.voiceName });
-    return { success: true, audio: result.audio };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return { success: false, error: 'Invalid text format for audio generation.' };
-    }
-    return { success: false, error: 'An unexpected error occurred while generating audio.' };
-  }
 }
 
 export async function generateAvatarAction(data: { prompt: string }) {
