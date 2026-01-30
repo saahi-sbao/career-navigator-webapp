@@ -76,12 +76,4 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-  
-  .light body {
-    background-image: url('https://storage.googleapis.com/project-spark-3c51e.appspot.com/generated/v81dkbn3g0l2t75t707a3l9j1/image_0.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
 }
