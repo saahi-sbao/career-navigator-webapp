@@ -217,8 +217,8 @@ export default function AssessmentPage() {
                 const weight = path.requiredIntelligences[mi as keyof typeof path.requiredIntelligences];
                 const studentScore = miScores[mi] || 0;
                 
-                matchScore += (studentScore / 100) * weight;
-                totalWeight += weight;
+                matchScore += (studentScore / 100) * (weight ?? 0);
+                totalWeight += (weight ?? 0);
             }
 
             const normalizedMatchScore = totalWeight > 0 ? matchScore / totalWeight : 0;
@@ -226,15 +226,17 @@ export default function AssessmentPage() {
             if (normalizedMatchScore > highestMatchScore) {
                 highestMatchScore = normalizedMatchScore;
                 bestMatch = path;
-            } else if (normalizedMatchScore === highestMatchScore && bestMatch) {
-                const primaryMI = Object.keys(path.requiredIntelligences).sort((a,b) => (path.requiredIntelligences as any)[b] - (path.requiredIntelligences as any)[a])[0];
-                const currentPrimaryScore = miScores[primaryMI] || 0;
-                
-                const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences).sort((a,b) => (bestMatch.requiredIntelligences as any)[b] - (bestMatch.requiredIntelligences as any)[a])[0];
-                const bestPrimaryScore = miScores[bestPrimaryMI] || 0;
+            } else if (normalizedMatchScore === highestMatchScore) {
+                if (bestMatch) {
+                    const primaryMI = Object.keys(path.requiredIntelligences).sort((a,b) => (path.requiredIntelligences as any)[b] - (path.requiredIntelligences as any)[a])[0];
+                    const currentPrimaryScore = miScores[primaryMI] || 0;
+                    
+                    const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences).sort((a,b) => (bestMatch.requiredIntelligences as any)[b] - (bestMatch.requiredIntelligences as any)[a])[0];
+                    const bestPrimaryScore = miScores[bestPrimaryMI] || 0;
 
-                if (currentPrimaryScore > bestPrimaryScore) {
-                    bestMatch = path;
+                    if (currentPrimaryScore > bestPrimaryScore) {
+                        bestMatch = path;
+                    }
                 }
             }
         });
@@ -618,4 +620,5 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
     );
 };
 
+    
     
