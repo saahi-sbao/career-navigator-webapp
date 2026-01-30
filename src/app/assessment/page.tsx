@@ -217,8 +217,8 @@ export default function AssessmentPage() {
                 const weight = path.requiredIntelligences[mi as keyof typeof path.requiredIntelligences];
                 const studentScore = miScores[mi] || 0;
                 
-                matchScore += (studentScore / 100) * weight;
-                totalWeight += weight;
+                matchScore += (studentScore / 100) * (weight ?? 0);
+                totalWeight += (weight ?? 0);
             }
 
             const normalizedMatchScore = totalWeight > 0 ? matchScore / totalWeight : 0;
