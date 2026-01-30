@@ -435,11 +435,30 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         const margin = 20;
         let y = margin;
         const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
 
+        const addPageBackground = () => {
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const pageWidth = doc.internal.pageSize.getWidth();
+
+            // A subtle, professional two-tone background.
+            // Top color - a very light, neutral blue-grey.
+            doc.setFillColor(249, 250, 251);
+            doc.rect(0, 0, pageWidth, pageHeight / 2, 'F');
+
+            // Bottom color - a very light, calming green.
+            doc.setFillColor(245, 253, 249);
+            doc.rect(0, pageHeight / 2, pageWidth, pageHeight / 2, 'F');
+        };
+
+        // Draw background on the first page
+        addPageBackground();
+        
         const addTextAndCheckPage = (textArray: string[], x: number, spacing = 0) => {
             textArray.forEach(line => {
                 if (y + 7 > doc.internal.pageSize.getHeight() - margin) {
                     doc.addPage();
+                    addPageBackground(); // Add background to the new page
                     y = margin;
                 }
                 doc.text(line, x, y);
@@ -499,7 +518,9 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         doc.setFontSize(12);
         sortedMiScores.forEach(([mi, score]) => {
             if (y + 7 > doc.internal.pageSize.getHeight() - margin) {
-                doc.addPage(); y = margin;
+                doc.addPage();
+                addPageBackground();
+                y = margin;
             }
             const miDisplay = mi.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
             doc.text(`${miDisplay}:`, margin, y);
@@ -515,7 +536,11 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         });
         y += 7;
 
-        if (y > doc.internal.pageSize.getHeight() - 50) { doc.addPage(); y = margin; }
+        if (y > pageHeight - 50) {
+            doc.addPage();
+            addPageBackground();
+            y = margin;
+        }
         doc.setFontSize(16);
         doc.setTextColor(0, 0, 128);
         doc.text('4. Suggested Career Paths', margin, y);
