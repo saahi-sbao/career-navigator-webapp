@@ -102,18 +102,78 @@ const stemCombinations = [
 ];
 
 const socialSciencesCombinations = [
-    { subjects: "History – Business Studies – Geography", careers: [] },
-    { subjects: "History – Business Studies – Fasihi", careers: [] },
-    { subjects: "History – Business Studies – Arabic", careers: [] },
-    { subjects: "History – CRE/IRE – Geography", careers: [] },
-    { subjects: "History – CRE/IRE – Fasihi", careers: [] },
-    { subjects: "History – CRE/IRE – Arabic", careers: [] },
-    { subjects: "Literature – Business Studies – Geography", careers: [] },
-    { subjects: "Literature – Business Studies – Fasihi", careers: [] },
-    { subjects: "Literature – Business Studies – Arabic", careers: [] },
-    { subjects: "Literature – CRE/IRE – Geography", careers: [] },
-    { subjects: "Literature – CRE/IRE – Fasihi", careers: [] },
-    { subjects: "Literature – CRE/IRE – Arabic", careers: [] },
+    { 
+        subjects: "History – Business Studies – Geography", 
+        careers: [
+            "International Relations / Diplomat", "Urban & Regional Planner", "Logistics & Supply Chain Manager", "Geopolitical / Market Research Analyst", "Tourism & Travel Management", "Environmental Policy Analyst", "Public Administrator"
+        ] 
+    },
+    { 
+        subjects: "History – Business Studies – Fasihi", 
+        careers: [
+            "Public Relations Specialist", "Corporate Communications Officer", "Journalist / News Anchor", "Publisher / Editor", "Marketing & Advertising Executive", "Government Administrator", "Cultural Heritage Manager"
+        ] 
+    },
+    { 
+        subjects: "History – Business Studies – Arabic", 
+        careers: [
+            "International Business Consultant (MENA focus)", "Diplomat / Foreign Service Officer", "Translator / Interpreter", "International Journalist", "NGO Manager (Middle East)", "Cross-Cultural Business Liaison"
+        ] 
+    },
+    { 
+        subjects: "History – CRE/IRE – Geography", 
+        careers: [
+            "Social Worker", "Community Development Officer", "NGO Program Officer", "Teacher (History, Geography, CRE/IRE)", "Social Policy Analyst", "Humanitarian Aid Worker", "Disaster Management Specialist"
+        ] 
+    },
+    { 
+        subjects: "History – CRE/IRE – Fasihi", 
+        careers: [
+            "Teacher (History, Fasihi, CRE/IRE)", "Cultural Journalist / Critic", "Museum Curator / Archivist", "Community Outreach Coordinator", "Social Researcher", "Writer / Author", "Communications Officer for NGOs"
+        ] 
+    },
+    { 
+        subjects: "History – CRE/IRE – Arabic", 
+        careers: [
+            "Islamic Studies Scholar / Researcher", "Teacher (History, IRE, Arabic)", "Chaplain / Community Religious Leader", "Interfaith Dialogue Coordinator", "Translator (Historical/Religious Texts)", "Work in Faith-Based Organizations"
+        ] 
+    },
+    { 
+        subjects: "Literature – Business Studies – Geography", 
+        careers: [
+            "Marketing Strategist", "Brand Manager", "Travel Writer / Tourism Marketer", "Real Estate Developer / Marketer", "Corporate Storyteller / Communications", "Publisher", "Location Scout (Film/Media)"
+        ] 
+    },
+    { 
+        subjects: "Literature – Business Studies – Fasihi", 
+        careers: [
+            "Copywriter / Content Creator", "Editor / Proofreader", "Public Relations Manager", "Media Producer / Scriptwriter", "Brand Storyteller", "Corporate Trainer", "Marketing Communications Manager"
+        ] 
+    },
+    { 
+        subjects: "Literature – Business Studies – Arabic", 
+        careers: [
+            "International Marketing Specialist (MENA)", "Cross-Cultural Communications Consultant", "Corporate Translator", "Public Relations for International Firms", "Global Brand Manager", "Business Development in Arabic Markets"
+        ] 
+    },
+    { 
+        subjects: "Literature – CRE/IRE – Geography", 
+        careers: [
+            "Teacher (English, Literature, CRE, Geography)", "Journalist / Social Commentator", "Policy Advisor for NGOs", "Community Educator", "Development Communications Officer", "Ethicist / Social Critic"
+        ] 
+    },
+    { 
+        subjects: "Literature – CRE/IRE – Fasihi", 
+        careers: [
+            "Teacher (Literature, Fasihi, CRE)", "Writer / Poet / Playwright", "Editor for Cultural Publications", "Religious / Cultural Correspondent", "Communications for Faith-Based NGOs", "Scriptwriter for local content"
+        ] 
+    },
+    { 
+        subjects: "Literature – CRE/IRE – Arabic", 
+        careers: [
+            "Scholar in Comparative Literature/Religion", "Translator (Literary/Religious Texts)", "Educator in Humanities", "Cultural Advisor", "Content creator for religious media", "Librarian/Archivist for special collections"
+        ] 
+    },
 ];
 
 export default function SubjectCombinationPage() {
@@ -283,7 +343,10 @@ export default function SubjectCombinationPage() {
                                     </div>
                                 </AccordionTrigger>
                                 <AccordionContent>
-                                    <p className="text-muted-foreground">A detailed career list for this Social Science combination is being compiled and will be available soon.</p>
+                                    <h4 className="font-semibold mb-3 text-foreground">Potential Careers:</h4>
+                                    <ul className="list-disc list-inside space-y-1.5 text-muted-foreground">
+                                        {combo.careers.map((career, i) => <li key={i}>{career}</li>)}
+                                    </ul>
                                 </AccordionContent>
                             </AccordionItem>
                         ))}
