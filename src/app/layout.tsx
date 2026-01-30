@@ -3,6 +3,11 @@ import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import ClientLayout from '@/components/client-layout';
+import { Toaster } from '@/components/ui/toaster';
+import { FirebaseClientProvider } from '@/firebase';
+import { ThemeProvider } from '@/components/theme-provider';
+import Chatbot from '@/components/chatbot';
+
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -66,7 +71,18 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <ClientLayout>{children}</ClientLayout>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <FirebaseClientProvider>
+            <ClientLayout>{children}</ClientLayout>
+            <Chatbot />
+            <Toaster />
+          </FirebaseClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -48,7 +48,8 @@ const chatFlow = ai.defineFlow(
       return { response: "I'm sorry, I can only respond to user messages." };
     }
 
-    const { output } = await ai.generate({
+    const result = await ai.generate({
+        model: 'googleai/gemini-2.5-flash',
         system: `You are a helpful, knowledgeable, and friendly career guidance assistant for the "Career Builder & Explorer (CBE)" application. Your personality should be professional, yet approachable and encouraging, similar to Google's Gemini. Your primary audience is students and teachers in Kenya.
 
 Your main goals are:
@@ -62,6 +63,6 @@ Your main goals are:
       history,
     });
 
-    return { response: output?.text || "I'm sorry, I couldn't generate a response." };
+    return { response: result.text || "I'm sorry, I couldn't generate a response." };
   }
 );

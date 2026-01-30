@@ -32,7 +32,7 @@ const generateAvatarFlow = ai.defineFlow(
   },
   async (input) => {
     const { media } = await ai.generate({
-      model: googleAI.model('imagen-4.0-fast-generate-001'),
+      model: 'googleai/imagen-4.0-fast-generate-001',
       prompt: `Generate a cute, cartoonish, circular avatar based on the following description. The background should be a simple, solid, vibrant color. Prompt: ${input.prompt}`,
       config: {
         responseMimeType: 'image/png',

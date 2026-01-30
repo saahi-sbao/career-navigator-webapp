@@ -506,7 +506,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         y += 3.5;
         addTextAndCheckPage(safeSplit(`Description: ${recommendation.pathway.description}`, pageWidth - margin * 2), margin);
         y += 3.5;
-        addTextAndCheckPage(safeSplit(`Key Subjects: ${recommendation.pathway.subjects.join(', ')}`, pageWidth - margin * 2), margin);
+        addTextAndCheckPage(safeSplit(`Essential Subjects: ${recommendation.pathway.subjects.join(', ')}`, pageWidth - margin * 2), margin);
         y += 14;
 
         doc.setFontSize(16);
@@ -580,7 +580,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                      <p className="mt-4 text-muted-foreground">{recommendation.pathway.description}.</p>
 
                      <div className="mt-4">
-                        <h4 className="font-semibold">Key Subjects:</h4>
+                        <h4 className="font-semibold">Essential Subjects:</h4>
                         <p className="text-muted-foreground">{recommendation.pathway.subjects.join(', ')}</p>
                      </div>
                      <div className="mt-4">
