@@ -30,7 +30,7 @@ export default function AboutPage() {
                         </li>
                         <li className="flex items-start gap-2">
                              <CheckCircle2 className="text-green-500 mt-1 h-6 w-6 flex-shrink-0" />
-                            <span><strong className="font-semibold">Personalized Recommendations:</strong> Based on your results, our AI generates personalized career recommendations, including specific careers and a 6-month skill development plan.</span>
+                            <span><strong className="font-semibold">Personalized Recommendations:</strong> Based on your results, our AI generates personalized career recommendations, including specific careers, and a 6-month skill development plan.</span>
                         </li>
                     </ul>
                 </div>
