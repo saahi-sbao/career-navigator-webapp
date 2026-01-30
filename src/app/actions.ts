@@ -57,7 +57,6 @@ export async function fetchSuggestionsAction(data: { interests: string[] }) {
     const result = await getPersonalizedCareerSuggestions({ interests: validatedData.interests });
     return { success: true, suggestions: result.suggestions };
   } catch (error) {
-    console.error('Error fetching suggestions:', error);
     if (error instanceof z.ZodError) {
       return { success: false, error: 'Invalid input provided for suggestions.' };
     }
@@ -71,7 +70,6 @@ export async function fetchStudyRecommendationsAction(data: z.infer<typeof Study
         const result = await getStudyRecommendations(validatedData);
         return { success: true, recommendations: result.recommendations };
     } catch (error) {
-        console.error('Error fetching study recommendations:', error);
         if (error instanceof z.ZodError) {
             return { success: false, error: 'Invalid input for study recommendations.' };
         }
@@ -85,7 +83,6 @@ export async function generateChatResponseAction(data: { messages: z.infer<typeo
     const result = await generateChatResponse({ messages: validatedData.messages });
     return { success: true, response: result.response };
   } catch (error) {
-    console.error('Error in chat response action:', error);
     if (error instanceof z.ZodError) {
       return { success: false, error: 'Invalid chat message format.' };
     }
@@ -99,7 +96,6 @@ export async function generateAudioAction(data: { text: string, voiceName?: stri
     const result = await generateAudio({ text: validatedData.text, voiceName: validatedData.voiceName });
     return { success: true, audio: result.audio };
   } catch (error) {
-    console.error('Error in audio generation action:', error);
     if (error instanceof z.ZodError) {
       return { success: false, error: 'Invalid text format for audio generation.' };
     }
@@ -113,7 +109,6 @@ export async function generateAvatarAction(data: { prompt: string }) {
         const result = await generateAvatar(validatedData);
         return { success: true, imageUrl: result.imageUrl };
     } catch (error) {
-        console.error('Error generating avatar:', error);
         if (error instanceof z.ZodError) {
             return { success: false, error: 'Invalid prompt format for avatar generation.' };
         }
@@ -127,7 +122,6 @@ export async function generateStoryAction(data: { prompt: string }) {
         const result = await generateStory(validatedData);
         return { success: true, story: result.story };
     } catch (error) {
-        console.error('Error generating story:', error);
         if (error instanceof z.ZodError) {
             return { success: false, error: 'Invalid prompt for story generation.' };
         }
@@ -141,7 +135,6 @@ export async function getSubjectCombinationSuggestionsAction(data: { subjects: s
         const result = await getSubjectCombinationSuggestions(validatedData);
         return { success: true, suggestions: result };
     } catch (error) {
-        console.error('Error fetching subject combination suggestions:', error);
         if (error instanceof z.ZodError) {
             return { success: false, error: 'Invalid input for subject combinations.' };
         }

@@ -61,7 +61,6 @@ export default function CareerCard({ field, onOpenDetails }: CareerCardProps) {
           }
         });
         errorEmitter.emit('permission-error', contextualError);
-        console.error("Error creating interest:", err);
       }).finally(() => setIsProcessing(false));
     } else {
       deleteDoc(interestRef).catch(err => {
@@ -70,7 +69,6 @@ export default function CareerCard({ field, onOpenDetails }: CareerCardProps) {
           path: interestRef.path,
         });
         errorEmitter.emit('permission-error', contextualError);
-        console.error("Error deleting interest:", err);
       }).finally(() => setIsProcessing(false));
     }
   };

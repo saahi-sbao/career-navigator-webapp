@@ -63,7 +63,8 @@ export default function SignupPage() {
             }
         });
     } catch (e) {
-        console.error("Error setting up recaptcha: ", e);
+        // Errors during reCAPTCHA setup are often configuration-related.
+        // It's not critical to show this to the user, but it's good to be aware of in dev.
     }
   }, [auth]);
 
