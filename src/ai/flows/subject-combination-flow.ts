@@ -10,7 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const SubjectCombinationInputSchema = z.object({
+const SubjectCombinationInputSchema = z.object({
   subjects: z
     .array(z.string())
     .min(3)
@@ -18,7 +18,7 @@ export const SubjectCombinationInputSchema = z.object({
 });
 export type SubjectCombinationInput = z.infer<typeof SubjectCombinationInputSchema>;
 
-export const SubjectCombinationOutputSchema = z.object({
+const SubjectCombinationOutputSchema = z.object({
   reasoning: z.string().describe("A brief explanation of why the suggestions are a good fit for the subject combination."),
   recommendedCareers: z
     .array(z.string())
