@@ -50,10 +50,10 @@ export default function Header() {
               Assessment
             </Link>
             <Link
-              href="/mentors"
+              href="/subject-combination"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              Mentors
+              Subjects
             </Link>
              <Link
               href="/resources"

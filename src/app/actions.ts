@@ -7,6 +7,7 @@ import { generateChatResponse } from '@/ai/flows/chat';
 import { generateAudio } from '@/ai/flows/tts';
 import { generateAvatar } from '@/ai/flows/generate-avatar';
 import { generateStory } from '@/ai/flows/story-generator';
+import { getSubjectCombinationSuggestions, type SubjectCombinationOutput } from '@/ai/flows/subject-combination-flow';
 import { z } from 'zod';
 
 // Define schemas locally in the actions file
@@ -43,6 +44,10 @@ const AvatarSchema = z.object({
 
 const StorySchema = z.object({
     prompt: z.string(),
+});
+
+const SubjectCombinationSchema = z.object({
+    subjects: z.array(z.string()),
 });
 
 
@@ -127,5 +132,20 @@ export async function generateStoryAction(data: { prompt: string }) {
             return { success: false, error: 'Invalid prompt for story generation.' };
         }
         return { success: false, error: 'An unexpected error occurred while generating the story.' };
+    }
+}
+
+export async function getSubjectCombinationSuggestionsAction(data: { subjects: string[] }): Promise<{ success: boolean; suggestions?: SubjectCombinationOutput; error?: string; }> {
+    try {
+        const validatedData = SubjectCombinationSchema.parse(data);
+        const result = await getSubjectCombinationSuggestions(validatedData);
+        return { success: true, suggestions: result };
+    } catch (error) {
+        console.error('Error fetching subject combination suggestions:', error);
+        if (error instanceof z.ZodError) {
+            return { success: false, error: 'Invalid input for subject combinations.' };
+        }
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+        return { success: false, error: `An unexpected error occurred while fetching suggestions: ${errorMessage}` };
     }
 }

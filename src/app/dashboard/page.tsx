@@ -143,7 +143,7 @@ export default function DashboardPage() {
                                     <Link href="/#career-fields"><BookOpen className="mr-2 h-4 w-4" />Explore Career Fields</Link>
                                 </Button>
                                  <Button asChild className="w-full justify-start">
-                                    <Link href="/mentors"><Users className="mr-2 h-4 w-4" />Find a Mentor</Link>
+                                    <Link href="/subject-combination"><Users className="mr-2 h-4 w-4" />Subject Explorer</Link>
                                 </Button>
                             </>
                         )}

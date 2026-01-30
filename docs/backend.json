@@ -106,36 +106,6 @@
         "username"
       ]
     },
-    "Mentor": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "Mentor",
-        "type": "object",
-        "description": "Represents a mentor who can be contacted by students and teachers.",
-        "properties": {
-            "id": {
-                "type": "string",
-                "description": "Unique identifier for the mentor."
-            },
-            "name": {
-                "type": "string",
-                "description": "The full name of the mentor."
-            },
-            "email": {
-                "type": "string",
-                "format": "email",
-                "description": "Contact email for the mentor."
-            },
-            "phone": {
-                "type": "string",
-                "description": "Contact phone number for the mentor."
-            },
-            "county": {
-                "type": "string",
-                "description": "The mentor's county of residence."
-            }
-        },
-        "required": ["id", "name", "email", "county"]
-    },
     "StudyLog": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "title": "StudyLog",
@@ -183,12 +153,6 @@
         "$ref": "#/entities/AdminUser"
       },
       "description": "Collection to store admin users. The existence of a document grants admin privileges. Uses existence over content."
-    },
-    "/mentors/{mentorId}": {
-      "schema": {
-        "$ref": "#/entities/Mentor"
-      },
-      "description": "Stores mentor profiles. Editable only by admins, but viewable by all authenticated users."
     }
   }
 }

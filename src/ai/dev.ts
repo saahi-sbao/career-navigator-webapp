@@ -8,3 +8,5 @@ import '@/ai/flows/chat.ts';
 import '@/ai/flows/tts.ts';
 import '@/ai/flows/generate-avatar.ts';
 import '@/ai/flows/story-generator.ts';
+import '@/ai/flows/subject-combination-flow.ts';
+

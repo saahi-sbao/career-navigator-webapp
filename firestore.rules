@@ -5,7 +5,6 @@
  *
  * Data Structure: User-specific data, including profiles and career interests, is nested under the `/users/{userId}` path. This creates a clear ownership boundary.
  * Administrator roles are managed in a separate top-level collection, `/roles_admin/{userId}`, where the existence of a document grants admin privileges.
- * Mentor profiles are stored in the `/mentors` collection, which is publicly readable but only writable by administrators.
  *
  * Key Security Decisions:
  * - Default Deny: All paths are closed by default. Access is granted explicitly.
@@ -172,20 +171,6 @@ service cloud.firestore {
       allow create: if false;
       allow update: if false;
       allow delete: if false;
-    }
-    
-    /**
-     * @description Manages mentor profiles. Viewable by any authenticated user,
-     *   but can only be created, updated, or deleted by an administrator.
-     * @path /mentors/{mentorId}
-     * @allow Any authenticated user can read mentor profiles.
-     * @deny Only admins can write or delete mentor profiles.
-     * @principle Provides public read access to a shared resource while securing write operations to a privileged role.
-     */
-    match /mentors/{mentorId} {
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
-      allow create, update, delete: if isAdmin();
     }
   }
 }
