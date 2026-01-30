@@ -227,10 +227,10 @@ export default function AssessmentPage() {
                 highestMatchScore = normalizedMatchScore;
                 bestMatch = path;
             } else if (normalizedMatchScore === highestMatchScore && bestMatch) {
-                const primaryMI = Object.keys(path.requiredIntelligences).sort((a,b) => path.requiredIntelligences[b as keyof typeof path.requiredIntelligences] - path.requiredIntelligences[a as keyof typeof path.requiredIntelligences])[0];
+                const primaryMI = Object.keys(path.requiredIntelligences??).sort((a,b) => path.requiredIntelligences??[b as keyof typeof path.requiredIntelligences??] - path.requiredIntelligences??[a as keyof typeof path.requiredIntelligences??])[0];
                 const currentPrimaryScore = miScores[primaryMI] || 0;
                 
-                const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences).sort((a,b) => bestMatch.requiredIntelligences[b as keyof typeof bestMatch.requiredIntelligences] - bestMatch.requiredIntelligences[a as keyof typeof bestMatch.requiredIntelligences])[0];
+                const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences??).sort((a,b) => bestMatch.requiredIntelligences??[b as keyof typeof bestMatch.requiredIntelligences??] - bestMatch.requiredIntelligences??[a as keyof typeof bestMatch.requiredIntelligences??])[0];
                 const bestPrimaryScore = miScores[bestPrimaryMI] || 0;
 
                 if (currentPrimaryScore > bestPrimaryScore) {
