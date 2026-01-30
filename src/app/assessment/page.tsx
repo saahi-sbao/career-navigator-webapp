@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { ArrowRight, Redo, Download } from 'lucide-react';
+import { ArrowRight, Redo, Download, Loader2 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { cn } from '@/lib/utils';
 import { useUser, useFirestore } from '@/firebase';
@@ -105,21 +105,40 @@ export default function AssessmentPage() {
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
   const firestore = useFirestore();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
 
   useEffect(() => {
-    const savedInfo = localStorage.getItem('studentInfo');
-    const savedAnswers = localStorage.getItem('userAnswers');
-    const savedResults = localStorage.getItem('assessmentResults');
+    if (hasMounted) {
+        try {
+            const savedInfo = localStorage.getItem('studentInfo');
+            const savedAnswers = localStorage.getItem('userAnswers');
+            const savedResults = localStorage.getItem('assessmentResults');
 
-    if (savedResults) {
-      setResults(JSON.parse(savedResults));
-      setPage('results');
-    } else {
-      if (savedInfo) setStudentInfo(JSON.parse(savedInfo));
-      if (savedAnswers) setUserAnswers(JSON.parse(savedAnswers));
+            if (savedResults) {
+                const parsedResults = JSON.parse(savedResults);
+                if (parsedResults && parsedResults.info && parsedResults.recommendation?.pathway) {
+                    setResults(parsedResults);
+                    setPage('results');
+                } else {
+                    localStorage.removeItem('assessmentResults');
+                }
+            } else {
+                if (savedInfo) setStudentInfo(JSON.parse(savedInfo));
+                if (savedAnswers) setUserAnswers(JSON.parse(savedAnswers));
+            }
+        } catch (e) {
+            console.error("Failed to parse data from localStorage", e);
+            localStorage.removeItem('studentInfo');
+            localStorage.removeItem('userAnswers');
+            localStorage.removeItem('assessmentResults');
+        }
     }
-  }, []);
+  }, [hasMounted]);
 
   const startAssessment = (info: StudentInfo) => {
     if (!info.name || !info.age || !info.school) {
@@ -215,9 +234,8 @@ export default function AssessmentPage() {
             
             for (const mi in path.requiredIntelligences) {
                 const weight = path.requiredIntelligences[mi as keyof typeof path.requiredIntelligences];
-                const studentScore = miScores[mi] || 0;
                 
-                matchScore += (studentScore / 100) * (weight ?? 0);
+                matchScore += (miScores[mi] / 100) * (weight ?? 0);
                 totalWeight += (weight ?? 0);
             }
 
@@ -228,10 +246,13 @@ export default function AssessmentPage() {
                 bestMatch = path;
             } else if (normalizedMatchScore === highestMatchScore) {
                 if (bestMatch) {
-                    const primaryMI = Object.keys(path.requiredIntelligences).sort((a,b) => (path.requiredIntelligences as any)[b] - (path.requiredIntelligences as any)[a])[0];
+                    const pathIntelligences = path.requiredIntelligences;
+                    const bestMatchIntelligences = bestMatch.requiredIntelligences;
+
+                    const primaryMI = Object.keys(pathIntelligences).sort((a, b) => (pathIntelligences[b as keyof typeof pathIntelligences] ?? 0) - (pathIntelligences[a as keyof typeof pathIntelligences] ?? 0))[0];
                     const currentPrimaryScore = miScores[primaryMI] || 0;
                     
-                    const bestPrimaryMI = Object.keys(bestMatch.requiredIntelligences).sort((a,b) => (bestMatch.requiredIntelligences as any)[b] - (bestMatch.requiredIntelligences as any)[a])[0];
+                    const bestPrimaryMI = Object.keys(bestMatchIntelligences).sort((a, b) => (bestMatchIntelligences[b as keyof typeof bestMatchIntelligences] ?? 0) - (bestMatchIntelligences[a as keyof typeof bestMatchIntelligences] ?? 0))[0];
                     const bestPrimaryScore = miScores[bestPrimaryMI] || 0;
 
                     if (currentPrimaryScore > bestPrimaryScore) {
@@ -293,6 +314,14 @@ export default function AssessmentPage() {
   }
 
   const renderContent = () => {
+    if (!hasMounted) {
+      return (
+        <Card className="flex w-full max-w-2xl items-center justify-center p-20">
+          <Loader2 className="h-12 w-12 animate-spin" />
+        </Card>
+      );
+    }
+    
     switch (page) {
       case 'info':
         return <InfoPage onStart={startAssessment} initialInfo={studentInfo} error={error} />;
@@ -434,7 +463,7 @@ const Assessment = ({ question, index, total, answer, onAnswer, onNavigate, onSu
 
 const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRestart: () => void }) => {
     const { info, miScores, recommendation, timestamp } = results;
-    const sortedMiScores = Object.entries(miScores).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
+    const sortedMiScores = Object.entries(miScores || {}).sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
 
     const downloadPDF = () => {
         const doc = new jsPDF();
@@ -490,7 +519,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         addTextAndCheckPage([
-            `Name: ${info.name}`, `Age: ${info.age}`, `School: ${info.school}`,
+            `Name: ${info?.name || 'N/A'}`, `Age: ${info?.age || 'N/A'}`, `School: ${info?.school || 'N/A'}`,
             `Date: ${new Date(timestamp).toLocaleDateString()}`
         ], margin);
         y += 7;
@@ -503,16 +532,16 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         
         doc.setFontSize(14);
         doc.setTextColor(44, 123, 229);
-        addTextAndCheckPage([`Recommended Pathway: ${recommendation.pathway.name} Pathway`], margin);
+        addTextAndCheckPage([`Recommended Pathway: ${recommendation?.pathway?.name || 'N/A'} Pathway`], margin);
         
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         const safeSplit = (text: string, maxWidth: number) => doc.splitTextToSize(text, maxWidth);
-        addTextAndCheckPage(safeSplit(`Confidence Score: ${recommendation.confidence}%`, pageWidth - margin * 2), margin);
+        addTextAndCheckPage(safeSplit(`Confidence Score: ${recommendation?.confidence || 0}%`, pageWidth - margin * 2), margin);
         y += 3.5;
-        addTextAndCheckPage(safeSplit(`Description: ${recommendation.pathway.description}`, pageWidth - margin * 2), margin);
+        addTextAndCheckPage(safeSplit(`Description: ${recommendation?.pathway?.description || 'N/A'}`, pageWidth - margin * 2), margin);
         y += 3.5;
-        addTextAndCheckPage(safeSplit(`Essential Subjects: ${recommendation.pathway.subjects.join(', ')}`, pageWidth - margin * 2), margin);
+        addTextAndCheckPage(safeSplit(`Essential Subjects: ${recommendation?.pathway?.subjects?.join(', ') || 'N/A'}`, pageWidth - margin * 2), margin);
         y += 14;
 
         doc.setFontSize(16);
@@ -532,12 +561,12 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
             doc.text(`${miDisplay}:`, margin, y);
             const barX = margin + 60;
             const barWidth = 80;
-            const fillWidth = (score / 100) * barWidth;
+            const fillWidth = ((score || 0) / 100) * barWidth;
             doc.setFillColor(230, 230, 230);
             doc.rect(barX, y - 4, barWidth, 5, 'F');
             doc.setFillColor(44, 123, 229);
             doc.rect(barX, y - 4, fillWidth, 5, 'F');
-            doc.text(`${score}%`, barX + barWidth + 5, y);
+            doc.text(`${score || 0}%`, barX + barWidth + 5, y);
             y += 7;
         });
         y += 7;
@@ -555,14 +584,14 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
 
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
-        const careersText = recommendation.pathway.careers.join(', ');
+        const careersText = recommendation?.pathway?.careers?.join(', ') || 'N/A';
         addTextAndCheckPage(safeSplit(careersText, pageWidth - margin * 2), margin, 2);
         
         doc.setFontSize(10);
         doc.setTextColor(139, 0, 0);
         doc.text('Disclaimer: This report is for guidance only. Consult with a qualified career counselor for personalized advice.', margin, doc.internal.pageSize.getHeight() - margin);
 
-        doc.save(`Career_Report_${info.name.replace(/\s+/g, '_')}.pdf`);
+        doc.save(`Career_Report_${info?.name?.replace(/\s+/g, '_') || 'Student'}.pdf`);
     };
 
     return (
@@ -574,25 +603,25 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
             <CardContent>
                 <div className="border rounded-lg p-4 mb-6">
                     <h3 className="font-bold text-lg mb-2">Student Summary</h3>
-                    <p><strong>Name:</strong> {info.name}</p>
-                    <p><strong>Age:</strong> {info.age}</p>
-                    <p><strong>School:</strong> {info.school}</p>
+                    <p><strong>Name:</strong> {info?.name || 'N/A'}</p>
+                    <p><strong>Age:</strong> {info?.age || 'N/A'}</p>
+                    <p><strong>School:</strong> {info?.school || 'N/A'}</p>
                 </div>
 
                 <div className="border bg-primary/5 border-primary/20 text-primary-foreground rounded-lg p-6 mb-8 shadow-sm">
                      <h3 className="text-xl font-bold text-primary mb-2">Your Recommended Pathway is:</h3>
-                     <h2 className="text-4xl font-extrabold text-primary">{recommendation.pathway.name} Pathway</h2>
-                     <p className="mt-2 text-lg">Match Confidence: <strong>{recommendation.confidence}%</strong></p>
-                     <p className="mt-4 text-muted-foreground">{recommendation.pathway.description}.</p>
+                     <h2 className="text-4xl font-extrabold text-primary">{recommendation?.pathway?.name || 'Not Determined'} Pathway</h2>
+                     <p className="mt-2 text-lg">Match Confidence: <strong>{recommendation?.confidence || 0}%</strong></p>
+                     <p className="mt-4 text-muted-foreground">{recommendation?.pathway?.description}.</p>
 
                      <div className="mt-4">
                         <h4 className="font-semibold">Essential Subjects:</h4>
-                        <p className="text-muted-foreground">{recommendation.pathway.subjects.join(', ')}</p>
+                        <p className="text-muted-foreground">{recommendation?.pathway?.subjects?.join(', ') || 'N/A'}</p>
                      </div>
                      <div className="mt-4">
                         <h4 className="font-semibold">Suggested Careers:</h4>
                         <div className="flex flex-wrap gap-2 mt-2">
-                            {recommendation.pathway.careers.map(c => <span key={c} className="bg-primary/20 text-primary font-medium px-3 py-1 rounded-full text-sm">{c}</span>)}
+                            {recommendation?.pathway?.careers?.map(c => <span key={c} className="bg-primary/20 text-primary font-medium px-3 py-1 rounded-full text-sm">{c}</span>)}
                         </div>
                      </div>
                 </div>
@@ -623,6 +652,3 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         </Card>
     );
 };
-
-    
-    
