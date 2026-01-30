@@ -241,8 +241,12 @@ export default function AssessmentPage() {
             }
         });
 
+        if (!bestMatch) {
+          throw new Error("Could not determine a career pathway.");
+        }
+
         return {
-            pathway: bestMatch!,
+            pathway: bestMatch,
             confidence: Math.round(highestMatchScore * 100)
         };
     }
