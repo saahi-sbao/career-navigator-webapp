@@ -7,7 +7,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import { ThemeProvider } from '@/components/theme-provider';
 
-
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
@@ -28,16 +27,16 @@ export const metadata: Metadata = {
     'mentor connection',
   ],
   authors: [{ name: 'Career Navigator' }],
-  metadataBase: new URL('https://career-navigator.app'), // Replace with your actual domain
+  metadataBase: new URL('https://career-navigator.app'), 
   openGraph: {
     type: 'website',
-    url: 'https://career-navigator.app', // Replace with your actual domain
+    url: 'https://career-navigator.app', 
     title: 'Career Navigator - AI-Powered Career Guidance for Students',
     description:
       'Career Navigator helps Kenyan students find their ideal career path with AI-powered assessments, personalized recommendations, and connections to mentors.',
     images: [
       {
-        url: 'https://career-navigator.app/og-image.png', // Replace with a link to your open graph image
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Career Navigator Hero Image',
@@ -46,14 +45,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    url: 'https://career-navigator.app', // Replace with your actual domain
     title: 'Career Navigator - AI-Powered Career Guidance for Students',
     description:
       'Career Navigator helps Kenyan students find their ideal career path with AI-powered assessments, personalized recommendations, and connections to mentors.',
-    images: ['https://career-navigator.app/twitter-image.png'], // Replace with a link to your twitter image
+    images: ['/twitter-image.png'], 
   },
   alternates: {
-    canonical: 'https://career-navigator.app/', // Replace with your actual domain
+    canonical: '/', 
   },
 };
 
