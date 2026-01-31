@@ -6,7 +6,7 @@ import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/fireb
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { doc } from 'firebase/firestore';
-import { Loader2, Upload } from 'lucide-react';
+import { Loader2, Upload, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import { Badge } from '@/components/ui/badge';
+import { generateAvatar } from '@/ai/flows/generate-avatar';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -32,6 +33,9 @@ export default function ProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [avatarPrompt, setAvatarPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -63,13 +67,30 @@ export default function ProfilePage() {
       await updateProfile(auth.currentUser, { photoURL: downloadURL });
       
       toast({ title: 'Profile Picture Updated!', description: 'Your new avatar is now active.' });
+      setPreviewImage(null);
       router.refresh(); 
 
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Upload Failed', description: error.message });
     } finally {
       setIsUploading(false);
-      setPreviewImage(null);
+    }
+  };
+  
+  const handleGenerateAvatar = async () => {
+    if (!avatarPrompt) {
+      toast({ variant: 'destructive', title: 'Prompt is empty', description: 'Please enter a description for your avatar.' });
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const result = await generateAvatar({ prompt: avatarPrompt });
+      setPreviewImage(result.imageUrl);
+      toast({ title: 'Avatar Generated!', description: 'You can now save it as your profile picture.' });
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Generation Failed', description: error.message || 'Could not generate avatar.' });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -99,8 +120,10 @@ export default function ProfilePage() {
             <CardDescription>{user.email || user.phoneNumber}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
-            <div className="flex flex-col items-center gap-6">
-              {previewImage && (
+            
+            {previewImage && (
+              <div className="flex flex-col items-center gap-4 border-b pb-8">
+                <p className="text-sm font-semibold text-primary">New avatar ready to save!</p>
                 <div className="flex gap-4">
                   <Button onClick={handleSaveProfilePicture} disabled={isUploading}>
                     {isUploading ? <Loader2 className="mr-2 animate-spin" /> : null}
@@ -108,12 +131,13 @@ export default function ProfilePage() {
                   </Button>
                   <Button variant="outline" onClick={() => setPreviewImage(null)}>Cancel</Button>
                 </div>
-              )}
-            </div>
-            
-            <div className="space-y-4">
+              </div>
+            )}
+
+            <div className="space-y-6">
               <h3 className="font-semibold text-lg text-center">Update Profile Picture</h3>
-              <div className="grid gap-4">
+              
+              <div className="grid gap-2">
                 <Label htmlFor="picture-upload">Upload an Image</Label>
                 <div className="flex items-center gap-3">
                   <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
@@ -130,6 +154,28 @@ export default function ProfilePage() {
                     accept="image/png, image/jpeg, image/gif"
                     className="hidden"
                   />
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">Or</span></div>
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="ai-prompt">Generate with AI</Label>
+                <div className="flex gap-2">
+                  <Input 
+                    id="ai-prompt" 
+                    placeholder="e.g., a happy lion reading a book" 
+                    value={avatarPrompt}
+                    onChange={(e) => setAvatarPrompt(e.target.value)}
+                    disabled={isGenerating}
+                  />
+                  <Button onClick={handleGenerateAvatar} disabled={isGenerating}>
+                    {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                    <span className="sr-only">Generate</span>
+                  </Button>
                 </div>
               </div>
             </div>
