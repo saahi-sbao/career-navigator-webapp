@@ -1,14 +1,11 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import Header from '@/components/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Loader2, Wand2, BookOpen } from 'lucide-react';
-import { getSubjectCombinationSuggestionsAction } from '@/app/actions';
-import { useToast } from '@/hooks/use-toast';
+import { BookOpen } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,12 +16,6 @@ const SUBJECTS = [
   'History', 'Geography', 'CRE', 'Business Studies', 'Agriculture', 'Computer Studies',
   'Art & Design', 'Music', 'Home Science', 'Physical Education'
 ];
-
-interface Suggestions {
-    recommendedCareers: string[];
-    furtherStudies: string[];
-    reasoning: string;
-}
 
 const stemCombinations = [
     {
@@ -178,39 +169,11 @@ const socialSciencesCombinations = [
 
 export default function SubjectCombinationPage() {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const { toast } = useToast();
 
   const handleSubjectToggle = (subject: string) => {
     setSelectedSubjects(prev =>
       prev.includes(subject) ? prev.filter(s => s !== subject) : [...prev, subject]
     );
-  };
-
-  const handleGetSuggestions = () => {
-    if (selectedSubjects.length < 3) {
-      toast({
-        variant: 'destructive',
-        title: 'Select More Subjects',
-        description: 'Please select at least 3 subjects to get relevant suggestions.',
-      });
-      return;
-    }
-
-    startTransition(async () => {
-      setSuggestions(null);
-      const result = await getSubjectCombinationSuggestionsAction({ subjects: selectedSubjects });
-      if (result.success && result.suggestions) {
-        setSuggestions(result.suggestions);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: result.error || 'Failed to get suggestions. Please try again.',
-        });
-      }
-    });
   };
 
   return (
@@ -249,58 +212,9 @@ export default function SubjectCombinationPage() {
               </div>
             </div>
 
-            <div className="text-center mb-8">
-              <Button size="lg" onClick={handleGetSuggestions} disabled={isPending}>
-                {isPending ? (
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                ) : (
-                  <Wand2 className="mr-2 h-5 w-5" />
-                )}
-                Get AI Career Suggestions
-              </Button>
+            <div className="text-center mb-8 text-sm text-muted-foreground">
+              AI-powered suggestions are disabled for static site builds.
             </div>
-
-            {isPending && (
-                <div className="text-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-                    <p className="text-muted-foreground mt-2">Our AI is thinking...</p>
-                </div>
-            )}
-
-            {suggestions && (
-              <div className="animate-in fade-in-50 space-y-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>AI-Powered Analysis</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">{suggestions.reasoning}</p>
-                    </CardContent>
-                </Card>
-                <div className="grid md:grid-cols-2 gap-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Recommended Careers</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <ul className="list-disc list-inside space-y-2">
-                                {suggestions.recommendedCareers.map(career => <li key={career}>{career}</li>)}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Areas for Further Studies</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                             <ul className="list-disc list-inside space-y-2">
-                                {suggestions.furtherStudies.map(study => <li key={study}>{study}</li>)}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                </div>
-              </div>
-            )}
 
             <Separator className="my-12" />
 

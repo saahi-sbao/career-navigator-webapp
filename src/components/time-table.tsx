@@ -1,14 +1,13 @@
-
 'use client';
 
-import { useState, useTransition, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { format, formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 import { useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
-import { collection, query, orderBy, doc, Timestamp, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, doc, Timestamp } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,10 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Loader2, PlusCircle, Lightbulb, BookCopy } from 'lucide-react';
+import { Loader2, PlusCircle, BookCopy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { fetchStudyRecommendationsAction } from '@/app/actions';
-import { Skeleton } from './ui/skeleton';
 
 interface TimeTableProps {
   user: User;
@@ -44,8 +41,6 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [recommendations, setRecommendations] = useState<string[]>([]);
-  const [isFetchingRecs, startRecsTransition] = useTransition();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<StudyLogFormValues>({
     resolver: zodResolver(studyLogSchema),
@@ -85,23 +80,6 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
         setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (studyLogs) {
-        startRecsTransition(async () => {
-            const preparedLogs = studyLogs.map(log => ({
-                subject: log.subject,
-                duration: log.duration,
-                date: (log.date as Timestamp).toDate().toISOString(),
-            }));
-            const result = await fetchStudyRecommendationsAction({ pathway: pathway.name, studyLogs: preparedLogs });
-            if (result.success && result.recommendations) {
-                setRecommendations(result.recommendations);
-            }
-        });
-    }
-  }, [studyLogs, pathway.name]);
-
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -164,26 +142,7 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
             </CardContent>
         </Card>
 
-        <Card className="bg-primary/5 border-primary/20">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary"><Lightbulb /> AI Study Recommendations</CardTitle>
-                <CardDescription>Personalized advice based on your study habits and pathway.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                {isFetchingRecs ? (
-                     <div className="space-y-3">
-                        <Skeleton className="h-5 w-[80%]" />
-                        <Skeleton className="h-5 w-[70%]" />
-                        <Skeleton className="h-5 w-[75%]" />
-                    </div>
-                ) : (
-                    <ul className="space-y-3 list-disc list-inside text-foreground/90">
-                       {recommendations.map((rec, i) => <li key={i}>{rec}</li>)}
-                       {recommendations.length === 0 && <p className="text-muted-foreground">Log a few study sessions to get your first recommendations!</p>}
-                    </ul>
-                )}
-            </CardContent>
-        </Card>
+        {/* The AI Recommendations Card has been removed as it relies on Server Actions, which are not compatible with static exports. */}
     </div>
   );
 }
