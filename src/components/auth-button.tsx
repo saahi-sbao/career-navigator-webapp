@@ -2,7 +2,7 @@
 
 import { LogIn, LogOut, Loader2, UserCircle, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useUser, useAuth } from '@/firebase';
+import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,11 +15,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
 import { useAdmin } from '@/hooks/use-admin';
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 
 export default function AuthButton() {
-  // Use "as any" to bypass Reactfire/Firebase hook type mismatches during build
+  // Use "as any" to bypass strict type checking for the rollout
   const userResult = useUser() as any;
   const user = userResult.data;
   const isUserLoading = userResult.status === 'loading';
@@ -27,7 +26,6 @@ export default function AuthButton() {
   const auth = useAuth();
   const firestore = useFirestore();
   
-  // Cast useAdmin to any to prevent property 'isAdmin' type errors
   const { isAdmin, isAdminLoading } = useAdmin() as any;
 
   const userDocRef = useMemoFirebase(
@@ -41,7 +39,6 @@ export default function AuthButton() {
     await signOut(auth);
   };
   
-  // Combine all loading states into one stable boolean
   const isLoading = isUserLoading || (user && (isAdminLoading || isDocLoading));
 
   if (isLoading) {
