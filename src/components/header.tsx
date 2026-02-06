@@ -56,6 +56,12 @@ export default function Header() {
               Subjects
             </Link>
              <Link
+              href="/story-generator"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Story Generator
+            </Link>
+             <Link
               href="/resources"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
