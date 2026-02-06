@@ -53,6 +53,7 @@ export const menuSuggestion = onCallGenkit(
   {
     // Grant access to the API key secret
     secrets: [apiKey],
+    region: "us-central1",
     // If you need to enable AppCheck or Auth, you would add them here
   },
   menuSuggestionFlow

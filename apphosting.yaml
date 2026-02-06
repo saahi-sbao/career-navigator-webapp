@@ -1,5 +1,6 @@
 # Settings for Backend (on Cloud Run).
 runConfig:
+  region: us-central1
   minInstances: 0
   maxInstances: 10
   cpu: 1
