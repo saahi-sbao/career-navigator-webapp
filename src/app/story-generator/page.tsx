@@ -1,6 +1,8 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,12 +11,24 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateStory, type StoryInput } from '@/ai/flows/story-generator';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
 
 export default function StoryGeneratorPage() {
   const [prompt, setPrompt] = useState('');
   const [story, setStory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const { isEnabled, isLoading: isFlagLoading } = useFeatureFlag('storyGenerator');
+  const router = useRouter();
+
+  useEffect(() => {
+    // If the flag has loaded and is disabled, redirect the user to the home page.
+    if (!isFlagLoading && !isEnabled) {
+      router.push('/');
+    }
+  }, [isFlagLoading, isEnabled, router]);
+
 
   const handleGenerateStory = async () => {
     if (!prompt) {
@@ -43,6 +57,37 @@ export default function StoryGeneratorPage() {
       setIsLoading(false);
     }
   };
+
+  // Show a loading spinner while the feature flag is being checked.
+  if (isFlagLoading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <Loader2 className="h-12 w-12 animate-spin" />
+        </main>
+      </div>
+    );
+  }
+
+  // Fallback in case the redirect is slow, or if the user gets to the page before redirect.
+  if (!isEnabled) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <Card>
+            <CardHeader>
+              <CardTitle>Feature Not Available</CardTitle>
+              <CardContent>
+                <p className="text-muted-foreground">This feature is not currently enabled. Please check back later.</p>
+              </CardContent>
+            </CardHeader>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

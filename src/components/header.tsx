@@ -1,3 +1,4 @@
+'use client';
 
 import { ThemeToggle } from './theme-toggle';
 import AuthButton from './auth-button';
@@ -6,6 +7,40 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
+
+// A small component to conditionally render the Story Generator link based on its feature flag.
+const StoryGeneratorLink = ({ isMobile = false }: { isMobile?: boolean }) => {
+  const { isEnabled, isLoading } = useFeatureFlag('storyGenerator');
+
+  // Don't render anything if the flag is loading or the feature is disabled.
+  if (isLoading || !isEnabled) {
+    return null;
+  }
+
+  if (isMobile) {
+    return (
+      <SheetClose asChild>
+        <Link
+            href="/story-generator"
+            className="transition-colors hover:text-foreground text-muted-foreground"
+        >
+            Story Generator
+        </Link>
+      </SheetClose>
+    );
+  }
+
+  return (
+    <Link
+      href="/story-generator"
+      className="transition-colors hover:text-foreground/80 text-foreground/60"
+    >
+      Story Generator
+    </Link>
+  );
+};
+
 
 export default function Header() {
   const navLinks = [
@@ -15,7 +50,6 @@ export default function Header() {
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/assessment', label: 'Assessment' },
     { href: '/subject-combination', label: 'Subjects' },
-    { href: '/story-generator', label: 'Story Generator' },
     { href: '/resources', label: 'Resources' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
@@ -43,6 +77,7 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            <StoryGeneratorLink />
           </nav>
         </div>
         
@@ -74,6 +109,7 @@ export default function Header() {
                                     </Link>
                                 </SheetClose>
                             ))}
+                            <StoryGeneratorLink isMobile={true} />
                         </nav>
                     </SheetContent>
                 </Sheet>

@@ -119,6 +119,17 @@
           "duration": { "type": "number", "description": "Duration in minutes" }
         },
         "required": ["id", "userId", "subject", "date", "duration"]
+    },
+    "FeatureFlag": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "FeatureFlag",
+      "type": "object",
+      "description": "Represents a feature flag to enable or disable functionality remotely.",
+      "properties": {
+        "id": { "type": "string", "description": "The name of the feature (e.g., 'storyGenerator')." },
+        "isEnabled": { "type": "boolean", "description": "Whether the feature is currently active." }
+      },
+      "required": ["id", "isEnabled"]
     }
   },
   "auth": {
@@ -153,6 +164,12 @@
         "$ref": "#/entities/AdminUser"
       },
       "description": "Collection to store admin users. The existence of a document grants admin privileges. Uses existence over content."
+    },
+    "/feature_flags/{flagId}": {
+      "schema": {
+        "$ref": "#/entities/FeatureFlag"
+      },
+      "description": "Stores feature flags for toggling application features. Documents are read-only from the client."
     }
   }
 }
