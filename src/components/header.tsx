@@ -4,8 +4,23 @@ import AuthButton from './auth-button';
 import Logo from './logo';
 import Link from 'next/link';
 import { Button } from './ui/button';
+import { Menu } from 'lucide-react';
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export default function Header() {
+  const navLinks = [
+    { href: '/#home', label: 'Home' },
+    { href: '/#features', label: 'Features' },
+    { href: '/#faq', label: 'FAQ' },
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/assessment', label: 'Assessment' },
+    { href: '/subject-combination', label: 'Subjects' },
+    { href: '/story-generator', label: 'Story Generator' },
+    { href: '/resources', label: 'Resources' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
@@ -14,82 +29,70 @@ export default function Header() {
             <div className="h-6 w-6">
               <Logo />
             </div>
-            <span className="hidden font-bold sm:inline-block">
+            <span className="font-bold sm:inline-block">
               Career Navigator
             </span>
           </Link>
           <nav className="flex items-center gap-6 text-sm">
-            <Link
-              href="/#home"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Home
-            </Link>
-            <Link
-              href="/#features"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Features
-            </Link>
-             <Link
-              href="/#faq"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              FAQ
-            </Link>
-            <Link
-              href="/dashboard"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/assessment"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Assessment
-            </Link>
-            <Link
-              href="/subject-combination"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Subjects
-            </Link>
-             <Link
-              href="/story-generator"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Story Generator
-            </Link>
-             <Link
-              href="/resources"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Resources
-            </Link>
-            <Link
-              href="/about"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Contact
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
         </div>
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-            {/* You can add a search bar here if needed */}
-          </div>
-          <nav className="flex items-center">
-            <AuthButton />
-            <ThemeToggle />
-          </nav>
+        
+        <div className="flex flex-1 items-center justify-between md:justify-end">
+            {/* Mobile Menu & Logo */}
+            <div className="flex items-center gap-2 md:hidden">
+                 <Sheet>
+                    <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Menu className="h-6 w-6" />
+                        <span className="sr-only">Toggle Menu</span>
+                    </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-full max-w-sm">
+                        <nav className="grid gap-6 text-lg font-medium mt-8">
+                            <Link href="/" className="flex items-center gap-2 font-semibold mb-4">
+                                <div className="h-6 w-6">
+                                    <Logo />
+                                </div>
+                                <span>Career Navigator</span>
+                            </Link>
+                            {navLinks.map((link) => (
+                                <SheetClose asChild key={link.href}>
+                                    <Link
+                                        href={link.href}
+                                        className="transition-colors hover:text-foreground text-muted-foreground"
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </SheetClose>
+                            ))}
+                        </nav>
+                    </SheetContent>
+                </Sheet>
+                 <Link href="/" className="flex items-center space-x-2">
+                    <div className="h-6 w-6">
+                        <Logo />
+                    </div>
+                    <span className="font-bold">
+                        Career Navigator
+                    </span>
+                </Link>
+            </div>
+
+            <nav className="flex items-center">
+                <AuthButton />
+                <ThemeToggle />
+            </nav>
         </div>
+
       </div>
     </header>
   );
