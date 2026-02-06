@@ -5,11 +5,14 @@ import Header from '@/components/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Loader2, Wand2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { getSubjectCombinationSuggestions, type SubjectCombinationOutput } from '@/ai/flows/subject-combination-flow';
 
 const SUBJECTS = [
   'Mathematics', 'English', 'Kiswahili', 'Physics', 'Chemistry', 'Biology',
@@ -169,12 +172,34 @@ const socialSciencesCombinations = [
 
 export default function SubjectCombinationPage() {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<SubjectCombinationOutput | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSubjectToggle = (subject: string) => {
     setSelectedSubjects(prev =>
       prev.includes(subject) ? prev.filter(s => s !== subject) : [...prev, subject]
     );
+    setSuggestions(null);
   };
+
+  const handleGetSuggestions = async () => {
+    if (selectedSubjects.length < 3) {
+        toast({ variant: 'destructive', title: 'Not enough subjects', description: 'Please select at least 3 subjects.' });
+        return;
+    }
+    setIsLoading(true);
+    setSuggestions(null);
+    try {
+        const result = await getSubjectCombinationSuggestions({ subjects: selectedSubjects });
+        setSuggestions(result);
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Failed to get suggestions', description: error.message });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -212,9 +237,41 @@ export default function SubjectCombinationPage() {
               </div>
             </div>
 
-            <div className="text-center mb-8 text-sm text-muted-foreground">
-              AI-powered suggestions are disabled for static site builds.
+            <div className="text-center my-8">
+              <Button 
+                size="lg" 
+                onClick={handleGetSuggestions} 
+                disabled={isLoading || selectedSubjects.length < 3}
+              >
+                {isLoading ? <Loader2 className="mr-2 animate-spin" /> : <Wand2 className="mr-2" />}
+                Get AI Career Suggestions
+              </Button>
+              {selectedSubjects.length < 3 && <p className="text-xs text-muted-foreground mt-2">Select at least 3 subjects to get suggestions.</p>}
             </div>
+
+            {suggestions && (
+                <Card className="mt-8 p-6 bg-secondary/50 animate-in fade-in-50">
+                    <h3 className="text-xl font-bold mb-4 text-primary">AI Generated Suggestions</h3>
+                    <div className="space-y-6">
+                        <div>
+                            <h4 className="font-semibold text-lg">Reasoning</h4>
+                            <p className="text-muted-foreground">{suggestions.reasoning}</p>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold text-lg">Recommended Careers</h4>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {suggestions.recommendedCareers.map(career => <Badge key={career}>{career}</Badge>)}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold text-lg">Further Studies</h4>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {suggestions.furtherStudies.map(study => <Badge variant="secondary" key={study}>{study}</Badge>)}
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+            )}
 
             <Separator className="my-12" />
 

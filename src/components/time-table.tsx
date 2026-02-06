@@ -15,8 +15,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Loader2, PlusCircle, BookCopy } from 'lucide-react';
+import { Loader2, PlusCircle, BookCopy, Lightbulb, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getStudyRecommendations } from '@/ai/flows/study-recommendations';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface TimeTableProps {
   user: User;
@@ -31,11 +33,69 @@ const studyLogSchema = z.object({
 
 type StudyLogFormValues = z.infer<typeof studyLogSchema>;
 
-interface StudyLogData extends StudyLogFormValues {
+interface StudyLogData {
     id: string;
     userId: string;
-    date: any; // Firestore timestamp
+    subject: string;
+    duration: number;
+    date: Timestamp;
 }
+
+function AIRecommendations({ pathway, studyLogs }: { pathway: any, studyLogs: StudyLogData[] | null }) {
+  const [recommendations, setRecommendations] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleGetRecommendations = async () => {
+    setIsLoading(true);
+    setRecommendations([]);
+    try {
+      const logs = studyLogs?.map(log => ({
+        subject: log.subject,
+        duration: log.duration,
+        date: log.date.toDate().toISOString(),
+      })) || [];
+
+      const result = await getStudyRecommendations({
+        pathway: pathway.name,
+        studyLogs: logs,
+      });
+      setRecommendations(result.recommendations);
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to get AI recommendations.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2"><Lightbulb /> AI Study Coach</CardTitle>
+        <CardDescription>Get personalized tips based on your study habits and pathway.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button onClick={handleGetRecommendations} disabled={isLoading}>
+          {isLoading ? <Loader2 className="mr-2 animate-spin" /> : <Wand2 className="mr-2" />}
+          Get Study Advice
+        </Button>
+        {recommendations.length > 0 && (
+          <Alert className="mt-6">
+            <AlertTitle className="font-semibold">Your Recommendations</AlertTitle>
+            <AlertDescription>
+              <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground">
+                {recommendations.map((rec, index) => (
+                  <li key={index}>{rec}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 
 export default function TimeTable({ user, pathway }: TimeTableProps) {
   const firestore = useFirestore();
@@ -118,7 +178,7 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
                 </form>
                 
                 <h3 className="font-semibold mb-2">Recent Sessions</h3>
-                 {logsLoading ? <p>Loading logs...</p> : (
+                 {logsLoading ? <div className="flex justify-center p-4"><Loader2 className="animate-spin" /></div> : (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -132,7 +192,7 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
                                 <TableRow key={log.id}>
                                     <TableCell className="font-medium">{log.subject}</TableCell>
                                     <TableCell>{log.duration} min</TableCell>
-                                    <TableCell>{formatDistanceToNow((log.date as Timestamp).toDate(), { addSuffix: true })}</TableCell>
+                                    <TableCell>{formatDistanceToNow(log.date.toDate(), { addSuffix: true })}</TableCell>
                                 </TableRow>
                             ))}
                              {studyLogs?.length === 0 && <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground">No study sessions logged yet.</TableCell></TableRow>}
@@ -141,8 +201,7 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
                  )}
             </CardContent>
         </Card>
-
-        {/* The AI Recommendations Card has been removed as it relies on Server Actions, which are not compatible with static exports. */}
+        <AIRecommendations pathway={pathway} studyLogs={studyLogs} />
     </div>
   );
 }

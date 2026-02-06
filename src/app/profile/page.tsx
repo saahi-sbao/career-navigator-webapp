@@ -15,9 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import { Badge } from '@/components/ui/badge';
-
-// AI features are disabled for static export
-// import { generateAvatar } from '@/ai/flows/generate-avatar';
+import { generateAvatar } from '@/ai/flows/generate-avatar';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -35,6 +33,9 @@ export default function ProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -61,15 +62,14 @@ export default function ProfilePage() {
     const storageRef = ref(storage, `avatars/${user.uid}/profile.png`);
 
     try {
+      // The previewImage from AI generation or file upload is a data URL
       await uploadString(storageRef, previewImage, 'data_url');
       const downloadURL = await getDownloadURL(storageRef);
       await updateProfile(auth.currentUser, { photoURL: downloadURL });
       
       toast({ title: 'Profile Picture Updated!', description: 'Your new avatar is now active.' });
       setPreviewImage(null);
-      // We must reload the window in a static context to see the change
-      window.location.reload(); 
-
+      
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Upload Failed', description: error.message });
     } finally {
@@ -77,6 +77,24 @@ export default function ProfilePage() {
     }
   };
   
+  const handleGenerateAvatar = async () => {
+    if (!aiPrompt) {
+      toast({ variant: 'destructive', title: 'Prompt is empty', description: 'Please enter a description for your avatar.' });
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const result = await generateAvatar({ prompt: aiPrompt });
+      if (result.imageUrl) {
+        setPreviewImage(result.imageUrl);
+        toast({ title: 'Avatar Generated!', description: 'Click "Save Profile Picture" to apply it.' });
+      }
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Generation Failed', description: error.message });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   if (isUserLoading || !user || isDocLoading) {
     return (
@@ -151,15 +169,17 @@ export default function ProfilePage() {
                 <div className="flex gap-2">
                   <Input 
                     id="ai-prompt" 
-                    placeholder="AI features disabled for static build." 
-                    disabled
+                    placeholder="e.g., A friendly lion wearing glasses"
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    disabled={isGenerating}
                   />
-                  <Button disabled>
-                    <Sparkles />
+                  <Button onClick={handleGenerateAvatar} disabled={isGenerating}>
+                    {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles />}
                     <span className="sr-only">Generate</span>
                   </Button>
                 </div>
-                 <p className="text-xs text-muted-foreground">AI avatar generation is a server-side feature and is disabled for static exports.</p>
+                 <p className="text-xs text-muted-foreground">Describe the avatar you want. Our AI will create it for you!</p>
               </div>
             </div>
           </CardContent>
