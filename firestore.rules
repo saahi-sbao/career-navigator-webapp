@@ -174,16 +174,17 @@ service cloud.firestore {
     }
     
     /**
-     * @description Manages feature flags for the application. All users (including
-     *   unauthenticated ones) can read flags to see which features are enabled. This
-     *   collection is read-only from the client-side to prevent users from enabling features themselves.
+     * @description Manages feature flags for the application. Any user can read a
+     *   specific flag to see if a feature is enabled. This collection is read-only
+     *   from the client-side to prevent users from enabling features themselves.
+     *   Listing the entire collection is disallowed.
      * @path /feature_flags/{flagId}
-     * @allow Any user reads the 'storyGenerator' flag. (get)
-     * @deny Any client tries to create, update, or delete a feature flag. (write)
+     * @allow Any user reads a single flag document (e.g., 'storyGenerator'). (get)
+     * @deny Any client tries to list all flags, or create, update, or delete a flag. (list, write)
      */
     match /feature_flags/{flagId} {
-      allow read;
-      allow write: if false;
+      allow get;
+      allow list, write: if false;
     }
   }
 }
