@@ -34,11 +34,23 @@ To run the application locally, use the following command. This will start the N
 npm run dev
 ```
 
-### Deployment
+### Deployment Checklist
 
-The project is configured for continuous deployment. Any changes pushed to the `main` branch of your GitHub repository will automatically trigger a new build and deploy the updated application to Firebase Hosting.
+To ensure your application is published successfully, please follow these steps:
 
-To deploy your latest changes, follow these steps:
-1.  Add your changes to Git: `git add .`
-2.  Commit your changes: `git commit -m "Your commit message"`
-3.  Push to the main branch: `git push`
+1.  **Verify Firebase Project**: Make sure your Firebase project has the **Blaze (pay-as-you-go) plan** enabled. This is required for server-side features like the AI Story Generator and Study Coach, which run on a server backend (App Hosting on Cloud Run).
+
+2.  **Test Production Build Locally**: Catch potential errors before deploying by building the app for production on your local machine. Run the following command:
+    ```bash
+    npm run build
+    ```
+    If this command completes without errors, your app is likely ready for deployment.
+
+3.  **Deploy via Git**: The project is configured for continuous deployment. To deploy your latest changes, simply commit and push your code to the `main` branch:
+    ```bash
+    git add .
+    git commit -m "Final changes before deployment"
+    git push
+    ```
+
+4.  **Monitor Build Logs**: After pushing, go to your **Firebase Console**, navigate to the **Hosting** section, and view the latest deployment. You can monitor the build and deployment logs there to ensure everything completes successfully.
