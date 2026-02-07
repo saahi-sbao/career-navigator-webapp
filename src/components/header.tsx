@@ -49,6 +49,7 @@ export default function Header() {
     { href: '/#faq', label: 'FAQ' },
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/assessment', label: 'Assessment' },
+    { href: '/intelligence-analyst', label: 'Intelligences' },
     { href: '/subject-combination', label: 'Subjects' },
     { href: '/resources', label: 'Resources' },
     { href: '/about', label: 'About' },
