@@ -54,3 +54,4 @@ To ensure your application is published successfully, please follow these steps:
     ```
 
 4.  **Monitor Build Logs**: After pushing, go to your **Firebase Console**, navigate to the **Hosting** section, and view the latest deployment. You can monitor the build and deployment logs there to ensure everything completes successfully.
+# career-navigator
