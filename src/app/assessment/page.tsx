@@ -83,7 +83,7 @@ const QUESTIONS = [
 
 
 type UserAnswers = { [key: string]: number };
-type StudentInfo = { name: string; age: number; school: string };
+type StudentInfo = { name: string; age: number; school: string; grade: string; };
 type MIScores = { [key: string]: number };
 type AssessmentResults = {
   info: StudentInfo;
@@ -141,8 +141,8 @@ export default function AssessmentPage() {
   }, [hasMounted]);
 
   const startAssessment = (info: StudentInfo) => {
-    if (!info.name || !info.age || !info.school) {
-      setError("Please fill in your Full Name, Age, and School/Institution before starting the quiz.");
+    if (!info.name || !info.age || !info.school || !info.grade) {
+      setError("Please fill in all your details before starting the quiz.");
       return;
     }
     setError(null);
@@ -360,6 +360,7 @@ const InfoPage = ({ onStart, initialInfo, error }: { onStart: (info: StudentInfo
         name: initialInfo?.name || '',
         age: initialInfo?.age || '',
         school: initialInfo?.school || '',
+        grade: initialInfo?.grade || '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -368,7 +369,7 @@ const InfoPage = ({ onStart, initialInfo, error }: { onStart: (info: StudentInfo
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onStart({ ...info, age: Number(info.age) });
+        onStart({ ...info, age: Number(info.age), grade: info.grade });
     }
 
     return (
@@ -395,6 +396,10 @@ const InfoPage = ({ onStart, initialInfo, error }: { onStart: (info: StudentInfo
                     <div>
                         <Label htmlFor="student-school">School / Institution</Label>
                         <Input id="student-school" name="school" value={info.school} onChange={handleChange} placeholder="e.g., Kenya High School" required />
+                    </div>
+                    <div>
+                        <Label htmlFor="student-grade">Grade / Form</Label>
+                        <Input id="student-grade" name="grade" value={info.grade} onChange={handleChange} placeholder="e.g., Form 3" required />
                     </div>
                     {error && <p className="text-destructive text-sm font-medium">{error}</p>}
                     <Button type="submit" size="lg" className="w-full text-lg mt-4">
@@ -520,6 +525,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         doc.setTextColor(0, 0, 0);
         addTextAndCheckPage([
             `Name: ${info?.name || 'N/A'}`, `Age: ${info?.age || 'N/A'}`, `School: ${info?.school || 'N/A'}`,
+            `Grade: ${info?.grade || 'N/A'}`,
             `Date: ${new Date(timestamp).toLocaleDateString()}`
         ], margin);
         y += 7;
@@ -532,21 +538,20 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         
         doc.setFontSize(14);
         doc.setTextColor(44, 123, 229);
-        addTextAndCheckPage([`Recommended Pathway: ${recommendation?.pathway?.name || 'N/A'} Pathway`], margin);
+        addTextAndCheckPage([`Recommended Career Pathway: ${recommendation?.pathway?.name || 'N/A'} Pathway`], margin);
         
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         const safeSplit = (text: string, maxWidth: number) => doc.splitTextToSize(text, maxWidth);
         addTextAndCheckPage(safeSplit(`Confidence Score: ${recommendation?.confidence || 0}%`, pageWidth - margin * 2), margin);
         y += 3.5;
-        addTextAndCheckPage(safeSplit(`Description: ${recommendation?.pathway?.description || 'N/A'}`, pageWidth - margin * 2), margin);
-        y += 3.5;
-        addTextAndCheckPage(safeSplit(`Essential Subjects: ${recommendation?.pathway?.subjects?.join(', ') || 'N/A'}`, pageWidth - margin * 2), margin);
+        const electives = recommendation?.pathway?.subjects?.slice(0, 3).join(', ') || 'N/A';
+        addTextAndCheckPage(safeSplit(`Key Electives: ${electives}`, pageWidth - margin * 2), margin);
         y += 14;
 
         doc.setFontSize(16);
         doc.setTextColor(0, 0, 128);
-        doc.text('3. Multiple Intelligence Profile (MI Scores)', margin, y);
+        doc.text('3. Your Passion, Ability, and Interest Profile (MI Scores)', margin, y);
         doc.line(margin, y + 1, pageWidth - margin, y + 1);
         y += 10.5;
 
@@ -578,7 +583,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         }
         doc.setFontSize(16);
         doc.setTextColor(0, 0, 128);
-        doc.text('4. Suggested Career Paths', margin, y);
+        doc.text('4. Recommended Career Tracks', margin, y);
         doc.line(margin, y + 1, pageWidth - margin, y + 1);
         y += 7;
 
@@ -589,7 +594,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         
         doc.setFontSize(10);
         doc.setTextColor(139, 0, 0);
-        doc.text('Disclaimer: This report is for guidance only. Consult with a qualified career counselor for personalized advice.', margin, doc.internal.pageSize.getHeight() - margin);
+        doc.text('Contact us through our number for more guidance +254117448455', margin, doc.internal.pageSize.getHeight() - margin);
 
         doc.save(`Career_Report_${info?.name?.replace(/\s+/g, '_') || 'Student'}.pdf`);
     };
@@ -606,6 +611,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                     <p><strong>Name:</strong> {info?.name || 'N/A'}</p>
                     <p><strong>Age:</strong> {info?.age || 'N/A'}</p>
                     <p><strong>School:</strong> {info?.school || 'N/A'}</p>
+                    <p><strong>Grade:</strong> {info?.grade || 'N/A'}</p>
                 </div>
 
                 <div className="border bg-primary/5 border-primary/20 text-primary-foreground rounded-lg p-6 mb-8 shadow-sm">
