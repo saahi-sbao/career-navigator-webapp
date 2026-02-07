@@ -1,28 +1,23 @@
 # Settings for Backend (on Cloud Run).
+# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
 runConfig:
-  region: us-central1
   minInstances: 0
-  maxInstances: 10
-  cpu: 1
-  memoryMiB: 512
+  # maxInstances: 100
+  # concurrency: 80
+  # cpu: 1
+  # memoryMiB: 512
 
-# Environment variables for the Build and Runtime
-env:
-  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    value: "AIzaSyAK2zDR1VFT6Yg5zp6x9_a3eolYnlOjDUM"
-  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "studio-1437981058-ade59.firebaseapp.com"
-  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    value: "studio-1437981058-ade59"
-  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: "studio-1437981058-ade59.firebasestorage.app"
-  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-    value: "251203676300"
-  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    value: "1:251203676300:web:be5a23f3980560409c33a9"
-  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-    value: "G-SJGL58SJL3"
+# Environment variables and secrets.
+# env:
+  # Configure environment variables.
+  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
+  # - variable: MESSAGE
+  #   value: Hello world!
+  #   availability:
+  #     - BUILD
+  #     - RUNTIME
 
-# This section enables specific Google Cloud integrations
-# google_maps_platform: {}
-# secrets_manager: {}
+  # Grant access to secrets in Cloud Secret Manager.
+  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
+  # - variable: MY_SECRET
+  #   secret: mySecretRef
