@@ -1,6 +1,7 @@
 {
   "hosting": [
     {
+      "site": "studio-1437981058-ade59",
       "target": "careernavigator",
       "source": ".",
       "ignore": [
@@ -10,7 +11,8 @@
       ],
       "frameworksBackend": {
         "region": "us-central1"
-      }
+      },
+      "appAssociation": "AUTO"
     }
   ]
 }
