@@ -1,0 +1,20 @@
+{
+  "node": {
+    "4046607924d157dc8d9d03d4b17f628586e93e345a": {
+      "workers": {
+        "app/page": {
+          "moduleId": 97699,
+          "async": false,
+          "exportedName": "getPersonalizedCareerSuggestions",
+          "filename": "src/ai/flows/personalized-career-suggestions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "getPersonalizedCareerSuggestions",
+      "filename": "src/ai/flows/personalized-career-suggestions.ts"
+    }
+  },
+  "edge": {}
+}

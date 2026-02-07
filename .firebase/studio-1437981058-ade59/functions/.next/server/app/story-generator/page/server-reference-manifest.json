@@ -1,0 +1,20 @@
+{
+  "node": {
+    "40a94a6cb4a213460ec05f135ad6782a297e6e8b03": {
+      "workers": {
+        "app/story-generator/page": {
+          "moduleId": 78925,
+          "async": false,
+          "exportedName": "generateStory",
+          "filename": "src/ai/flows/story-generator.ts"
+        }
+      },
+      "layer": {
+        "app/story-generator/page": "action-browser"
+      },
+      "exportedName": "generateStory",
+      "filename": "src/ai/flows/story-generator.ts"
+    }
+  },
+  "edge": {}
+}

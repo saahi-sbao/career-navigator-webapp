@@ -1,0 +1,20 @@
+{
+  "node": {
+    "40bcd0e9d47bfff4cd03559b2045a5e904351be7ff": {
+      "workers": {
+        "app/profile/page": {
+          "moduleId": 16918,
+          "async": false,
+          "exportedName": "generateAvatar",
+          "filename": "src/ai/flows/generate-avatar.ts"
+        }
+      },
+      "layer": {
+        "app/profile/page": "action-browser"
+      },
+      "exportedName": "generateAvatar",
+      "filename": "src/ai/flows/generate-avatar.ts"
+    }
+  },
+  "edge": {}
+}

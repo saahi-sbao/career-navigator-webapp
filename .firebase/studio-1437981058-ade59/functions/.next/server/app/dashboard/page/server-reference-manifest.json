@@ -1,0 +1,20 @@
+{
+  "node": {
+    "40eeac7745c8a88eabede0d78689bba581f2533d5a": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": 98399,
+          "async": false,
+          "exportedName": "getStudyRecommendations",
+          "filename": "src/ai/flows/study-recommendations.ts"
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser"
+      },
+      "exportedName": "getStudyRecommendations",
+      "filename": "src/ai/flows/study-recommendations.ts"
+    }
+  },
+  "edge": {}
+}

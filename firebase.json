@@ -1,7 +1,6 @@
 {
   "hosting": [
     {
-      "site": "studio-1437981058-ade59",
       "target": "careernavigator",
       "source": ".",
       "ignore": [

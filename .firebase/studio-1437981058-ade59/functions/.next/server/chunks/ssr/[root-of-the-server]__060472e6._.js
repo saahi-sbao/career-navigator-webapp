@@ -1,0 +1,7 @@
+module.exports=[874,(a,b,c)=>{b.exports=a.x("buffer",()=>require("buffer"))},59639,(a,b,c)=>{b.exports=a.x("node:process",()=>require("node:process"))},12057,(a,b,c)=>{b.exports=a.x("node:util",()=>require("node:util"))},78925,a=>{"use strict";var b=a.i(37936),c=a.i(3859);a.i(62241);var d=a.i(18246),e=a.i(13095);let f=d.z.object({prompt:d.z.string().describe("The prompt for the story.")}),g=d.z.object({story:d.z.string().describe("The generated story.")});async function h(a){return j(a)}let i=c.ai.definePrompt({name:"storyPrompt",input:{schema:f},output:{schema:g},prompt:`You are a creative and imaginative storyteller. Write a fun and engaging story based on the following prompt:
+
+Prompt: {{{prompt}}}
+
+Please ensure the story is suitable for all ages.`}),j=c.ai.defineFlow({name:"storyGeneratorFlow",inputSchema:f,outputSchema:g},async a=>{let{output:b}=await i(a);return{story:b?.story||"I'm sorry, I couldn't come up with a story for that prompt."}});(0,e.ensureServerEntryExports)([h]),(0,b.registerServerReference)(h,"40a94a6cb4a213460ec05f135ad6782a297e6e8b03",null),a.s([],13129),a.i(13129),a.s(["40a94a6cb4a213460ec05f135ad6782a297e6e8b03",()=>h],78925)},41713,a=>{a.v(b=>Promise.all(["server/chunks/ssr/[root-of-the-server]__f6584080._.js","server/chunks/ssr/[root-of-the-server]__a6e9808f._.js","server/chunks/ssr/[root-of-the-server]__6f62d038._.js"].map(b=>a.l(b))).then(()=>b(5477)))}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__060472e6._.js.map

@@ -1,0 +1,20 @@
+{
+  "node": {
+    "40699e57767c989633ea69f76134a4354b45473900": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/personalized-career-suggestions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getPersonalizedCareerSuggestions",
+          "filename": "src/ai/flows/personalized-career-suggestions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "exportedName": "getPersonalizedCareerSuggestions",
+      "filename": "src/ai/flows/personalized-career-suggestions.ts"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,20 @@
+{
+  "node": {
+    "40f5828bb39ade3bf78c6db634800013e3418a5d95": {
+      "workers": {
+        "app/subject-combination/page": {
+          "moduleId": 77176,
+          "async": false,
+          "exportedName": "getSubjectCombinationSuggestions",
+          "filename": "src/ai/flows/subject-combination-flow.ts"
+        }
+      },
+      "layer": {
+        "app/subject-combination/page": "action-browser"
+      },
+      "exportedName": "getSubjectCombinationSuggestions",
+      "filename": "src/ai/flows/subject-combination-flow.ts"
+    }
+  },
+  "edge": {}
+}

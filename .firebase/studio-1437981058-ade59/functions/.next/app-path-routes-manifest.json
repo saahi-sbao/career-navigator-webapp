@@ -1,0 +1,19 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/about/page": "/about",
+  "/admin/page": "/admin",
+  "/admin/students/page": "/admin/students",
+  "/assessment/page": "/assessment",
+  "/contact/page": "/contact",
+  "/dashboard/page": "/dashboard",
+  "/favicon.ico/route": "/favicon.ico",
+  "/intelligence-analyst/page": "/intelligence-analyst",
+  "/login/page": "/login",
+  "/page": "/",
+  "/profile/page": "/profile",
+  "/resources/page": "/resources",
+  "/signup/page": "/signup",
+  "/story-generator/page": "/story-generator",
+  "/subject-combination/page": "/subject-combination"
+}

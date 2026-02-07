@@ -1,0 +1,60 @@
+[00:00:28.832] Server  LOG     ✓ Ready in 21.2s
+[00:00:31.927] Server  LOG     ○ Compiling / ...
+[00:01:04.890] Server  WARN    ⚠ Cross origin request detected from 6000-firebase-studio-1764711927854.cluster-ikslh4rdsnbqsvu5nw3v4dqjj2.cloudworkstations.dev to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[00:01:07.577] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:09:36.355] Server  WARN    ⚠ Cross origin request detected from 9000-firebase-studio-1764711927854.cluster-ikslh4rdsnbqsvu5nw3v4dqjj2.cloudworkstations.dev to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[00:09:38.080] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:10:35.583] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:11:38.593] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:12:41.571] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:15:23.598] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:19:02.573] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:20:38.577] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:23:13.591] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
