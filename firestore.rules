@@ -183,8 +183,8 @@ service cloud.firestore {
      * @deny Any client tries to list all flags, or create, update, or delete a flag. (list, write)
      */
     match /feature_flags/{flagId} {
-      allow get;
-      allow list, write: if false;
+      allow read;
+      allow write: if false;
     }
   }
 }

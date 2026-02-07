@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "careernavigator",
     "source": ".",
     "ignore": [
       "firebase.json",
@@ -9,8 +8,7 @@
     ],
     "frameworksBackend": {
       "region": "us-central1"
-    },
-    "appAssociation": "AUTO"
+    }
   },
   "storage": {
     "rules": "storage.rules"
@@ -22,14 +20,14 @@
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint"
       ],
-      "source": "functions",
       "ignore": [
         "node_modules",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
-      ]
+      ],
+      "source": "functions"
     },
     {
       "codebase": "spagetti",
@@ -69,6 +67,21 @@
         "firebase-debug.*.log",
         "functions"
       ]
+    },
+    {
+      "backendId": "studio",
+      "rootDir": "/",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
+      ]
     }
-  ]
+  ],
+  "extensions": {},
+  "database": {
+    "rules": "database.rules.json"
+  }
 }
