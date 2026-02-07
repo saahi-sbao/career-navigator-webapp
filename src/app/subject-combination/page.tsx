@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -5,7 +6,7 @@ import Header from '@/components/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { BookOpen, Loader2, Wand2 } from 'lucide-react';
+import { BookOpen, Loader2, Wand2, BookText } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,6 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { getSubjectCombinationSuggestions, type SubjectCombinationOutput } from '@/ai/flows/subject-combination-flow';
+import { cn } from '@/lib/utils';
 
 const SUBJECTS = [
   'Mathematics', 'English', 'Kiswahili', 'Physics', 'Chemistry', 'Biology',
@@ -170,11 +172,45 @@ const socialSciencesCombinations = [
     },
 ];
 
+const officialPathways = [
+  {
+    name: 'Arts & Sports Science Pathway',
+    pathwayKey: 'arts',
+    tracks: [
+      { name: 'Sports Science', subjects: ['Sports and Recreation'] },
+      { name: 'Arts', subjects: ['Music and Dance', 'Theatre and Film', 'Fine Arts'] }
+    ]
+  },
+  {
+    name: 'Social Sciences Pathway',
+    pathwayKey: 'social',
+    tracks: [
+        { name: 'Languages & Literature', subjects: ['Literature in English', 'Indigenous Languages', 'Fasihi ya Kiswahili', 'Sign Language', 'Arabic', 'French', 'German', 'Mandarin Chinese']},
+        { name: 'Humanities & Business Studies', subjects: ['Christian Religious Education', 'Islamic Religious Education', 'Hindu Religious Education', 'Business Studies', 'History and Citizenship', 'Geography']}
+    ]
+  },
+  {
+    name: 'Science, Technology, Engineering & Mathematics (STEM) Pathway',
+    pathwayKey: 'stem',
+    tracks: [
+        { name: 'Pure Sciences', subjects: ['Biology', 'Chemistry', 'Physics', 'General Science']},
+        { name: 'Applied Sciences', subjects: ['Agriculture', 'Computer Studies', 'Home Science']},
+        { name: 'Technical Studies', subjects: ['Aviation', 'Building Construction', 'Electricity', 'Metalwork', 'Media Technology', 'Marine and Fisheries Technology']}
+    ]
+  }
+];
+
 export default function SubjectCombinationPage() {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<SubjectCombinationOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const pathwayStyles = {
+    arts: { trigger: 'text-rose-600', badge: 'bg-rose-100 text-rose-800 hover:bg-rose-200 border-rose-200' },
+    social: { trigger: 'text-amber-700', badge: 'bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200' },
+    stem: { trigger: 'text-sky-600', badge: 'bg-sky-100 text-sky-800 hover:bg-sky-200 border-sky-200' },
+  } as const;
 
   const handleSubjectToggle = (subject: string) => {
     setSelectedSubjects(prev =>
@@ -272,6 +308,37 @@ export default function SubjectCombinationPage() {
                     </div>
                 </Card>
             )}
+
+            <Separator className="my-12" />
+
+            <div className="text-center">
+                <h3 className="text-2xl font-extrabold text-primary flex items-center justify-center gap-3"><BookText /> Official Senior School Pathways</h3>
+                <p className="text-muted-foreground mt-2">Explore the official pathways, tracks, and subject choices within the CBC curriculum.</p>
+            </div>
+
+            <Accordion type="single" collapsible className="w-full mt-8">
+                {officialPathways.map((pathway, index) => (
+                    <AccordionItem value={`pathway-${index}`} key={pathway.name}>
+                        <AccordionTrigger className={cn("text-xl hover:no-underline font-semibold", pathwayStyles[pathway.pathwayKey as keyof typeof pathwayStyles].trigger)}>
+                            {pathway.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 space-y-6">
+                            {pathway.tracks.map((track) => (
+                                <div key={track.name} className="p-4 rounded-lg border bg-background">
+                                    <h4 className="font-semibold text-lg mb-3">{track.name} Track</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {track.subjects.map((subject) => (
+                                            <Badge key={subject} variant="outline" className={cn("text-base font-normal", pathwayStyles[pathway.pathwayKey as keyof typeof pathwayStyles].badge)}>
+                                              {subject}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </AccordionContent>
+                    </AccordionItem>
+                ))}
+            </Accordion>
 
             <Separator className="my-12" />
 
