@@ -65,7 +65,7 @@ const faqs = [
     },
     {
         question: "How does the assessment work?",
-        answer: "The assessment consists of a 40-question quiz that evaluates you on 8 different types of intelligence (e.g., Logical-Mathematical, Linguistic, Spatial). Based on your scores, our system matches your profile to the most suitable senior school pathway and suggests potential careers."
+        answer: "The assessment consists of a 45-question quiz that evaluates you on 9 different types of intelligence (e.g., Logical-Mathematical, Linguistic, Existential). Based on your scores, our system matches your profile to the most suitable senior school pathway and suggests potential careers."
     },
     {
         question: "Is the assessment free?",

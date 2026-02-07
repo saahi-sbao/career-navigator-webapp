@@ -79,6 +79,13 @@ const QUESTIONS = [
     { id: 'q38', text: 'Do you notice small details or changes in your natural surroundings, such as changes in the weather or seasons?', intelligence: 'naturalist' },
     { id: 'q39', text: 'Are you interested in subjects like biology, ecology, geology, or environmental conservation?', intelligence: 'naturalist' },
     { id: 'q40', text: 'Do you enjoy collecting and classifying objects from nature, like leaves, stones, or shells?', intelligence: 'naturalist' },
+
+    // Existential
+    { id: 'q41', text: 'Do you often think about the meaning of life, death, and why we are here?', intelligence: 'existential' },
+    { id: 'q42', text: 'Are you interested in exploring different philosophical or spiritual perspectives on human existence?', intelligence: 'existential' },
+    { id: 'q43', text: 'Do you feel a sense of connection to something larger than yourself, whether it\'s the universe, humanity, or a spiritual realm?', intelligence: 'existential' },
+    { id: 'q44', text: 'Do you find yourself pondering big questions, such as "What is my purpose?" or "What happens after we die?"', intelligence: 'existential' },
+    { id: 'q45', text: 'Are you able to step back from everyday life to contemplate humanity\'s place in the bigger picture?', intelligence: 'existential' },
 ];
 
 
@@ -189,7 +196,7 @@ export default function AssessmentPage() {
 
   const submitAssessment = async () => {
     if (Object.keys(userAnswers).length !== QUESTIONS.length) {
-      setError("Please answer all 40 questions before submitting.");
+      setError(`Please answer all ${QUESTIONS.length} questions before submitting.`);
       const firstUnanswered = QUESTIONS.findIndex(q => userAnswers[q.id] === undefined);
       if(firstUnanswered !== -1) setCurrentQuestionIndex(firstUnanswered);
       return;
@@ -199,7 +206,7 @@ export default function AssessmentPage() {
     const calculateMIScores = (): MIScores => {
         const scores: {[key: string]: number} = {
             linguistic: 0, logicalMathematical: 0, spatial: 0, bodilyKinesthetic: 0,
-            musical: 0, interpersonal: 0, intrapersonal: 0, naturalist: 0
+            musical: 0, interpersonal: 0, intrapersonal: 0, naturalist: 0, existential: 0
         };
         const counts = { ...scores };
 
@@ -496,6 +503,8 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         y += 7;
         doc.text(`School: ${info?.school || '________________________________'}`, margin, y);
         y += 7;
+        doc.text(`Grade: ${info?.grade || '______'}`, margin, y);
+        y += 7;
         doc.text(`Date: ${new Date(timestamp).toLocaleDateString()}`, margin, y);
         y += 15;
 
@@ -576,7 +585,8 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
             { label: 'Musical', key: 'musical' },
             { label: 'Interpersonal', key: 'interpersonal' },
             { label: 'Intrapersonal', key: 'intrapersonal' },
-            { label: 'Naturalist', key: 'naturalist' }
+            { label: 'Naturalist', key: 'naturalist' },
+            { label: 'Existential', key: 'existential' }
         ];
 
         miProfileOrder.forEach(item => {
@@ -635,7 +645,6 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                      <h3 className="text-xl font-bold text-primary mb-2">Your Recommended Pathway is:</h3>
                      <h2 className="text-4xl font-extrabold text-primary">{recommendation?.pathway?.name || 'Not Determined'} Pathway</h2>
                      <p className="mt-2 text-lg">Match Confidence: <strong>{recommendation?.confidence || 0}%</strong></p>
-                     <p className="mt-4 text-muted-foreground">{recommendation?.pathway?.description}.</p>
 
                      <div className="mt-4">
                         <h4 className="font-semibold">Key Electives:</h4>
