@@ -19,6 +19,9 @@ import { Loader2, PlusCircle, BookCopy, Lightbulb, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getStudyRecommendations } from '@/ai/flows/study-recommendations';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface TimeTableProps {
   user: User;
@@ -101,6 +104,8 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { isEnabled: isStudyCoachEnabled, isLoading: isFlagLoading } = useFeatureFlag('studyCoach');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<StudyLogFormValues>({
     resolver: zodResolver(studyLogSchema),
@@ -140,9 +145,41 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
         setIsSubmitting(false);
     }
   };
+  
+  if (isFlagLoading) {
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-2/3" />
+                    <Skeleton className="h-4 w-full" />
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                       <Skeleton className="h-24 w-full" />
+                       <Skeleton className="h-10 w-32" />
+                    </div>
+                    <Skeleton className="h-40 w-full mt-8" />
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-3/4" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-10 w-40" />
+                </CardContent>
+            </Card>
+        </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className={cn(
+        "grid gap-8",
+        isStudyCoachEnabled ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
+    )}>
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BookCopy /> Study Time Table</CardTitle>
@@ -201,7 +238,7 @@ export default function TimeTable({ user, pathway }: TimeTableProps) {
                  )}
             </CardContent>
         </Card>
-        <AIRecommendations pathway={pathway} studyLogs={studyLogs} />
+        {isStudyCoachEnabled && <AIRecommendations pathway={pathway} studyLogs={studyLogs} />}
     </div>
   );
 }
