@@ -483,6 +483,23 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         let y = margin;
         const pageWidth = doc.internal.pageSize.getWidth();
 
+        const intelligenceDescriptions: Record<string, string> = {
+            linguistic: "Expressing ideas and telling stories through language, writing, and public speaking.",
+            logicalMathematical: "Solving complex problems, analyzing data, and understanding patterns and logical systems.",
+            spatial: "Visualizing and manipulating objects in space, creating art, and navigating complex environments.",
+            bodilyKinesthetic: "Using your body to create, perform, and express yourself through physical activity and hands-on work.",
+            musical: "Understanding and creating music, recognizing rhythms, and appreciating sound patterns.",
+            interpersonal: "Connecting with and understanding others, leading teams, and collaborating effectively.",
+            intrapersonal: "Deep self-reflection, understanding your own emotions, and pursuing personal growth.",
+            naturalist: "Connecting with the natural world, identifying patterns in nature, and working with plants and animals.",
+            existential: "Exploring deep questions about life, purpose, and the human condition through philosophy and contemplation."
+        };
+
+        const topThreeIntelligences = sortedMiScores.slice(0, 3);
+        const passionText = intelligenceDescriptions[topThreeIntelligences[0]?.[0]] || "Exploring your primary strengths.";
+        const abilityText = intelligenceDescriptions[topThreeIntelligences[1]?.[0]] || "Developing your secondary talents.";
+        const interestText = intelligenceDescriptions[topThreeIntelligences[2]?.[0]] || "Cultivating your emerging interests.";
+
         // 1. Title
         doc.setFontSize(22);
         doc.setFont('helvetica', 'bold');
@@ -512,40 +529,19 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
         doc.text('2. Pathway Recommendation', margin, y);
-        y += 7;
+        y += 10;
         doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Recommended Pathway: ${recommendation?.pathway?.name || 'Not Determined'}`, margin, y);
+        y += 7;
         doc.setFont('helvetica', 'normal');
-        doc.text('Recommended Pathway:', margin, y);
-        
-        const pathwayOptions = {
-            'STEM': 'stem',
-            'Social Sciences': 'ss',
-            'Arts & Sports Science': 'ass'
-        };
-
-        let checkboxY = y + 7;
-        Object.entries(pathwayOptions).forEach(([name, id]) => {
-            const isSelected = recommendation?.pathway?.id === id;
-            doc.rect(margin, checkboxY - 4, 4, 4); // draw box
-            if (isSelected) {
-                doc.setFont('helvetica', 'bold');
-                doc.text('X', margin + 1, checkboxY - 3);
-                doc.setFont('helvetica', 'normal');
-            }
-            doc.text(name, margin + 6, checkboxY);
-            checkboxY += 7;
-        });
-        y = checkboxY;
-        y += 5;
-
         doc.text(`Confidence Score: ${recommendation?.confidence || '____'} %`, margin, y);
         y += 10;
-
-        doc.text('(3 electives Subjects):', margin, y);
+        doc.text('Key Electives:', margin, y);
         y += 7;
         const electives = recommendation?.pathway?.subjects?.slice(0, 3) || [];
         for (let i = 0; i < 3; i++) {
-            doc.text(`${i + 1}. ${electives[i] || '________________________________'}`, margin, y);
+            doc.text(`${i + 1}. ${electives[i] || '________________________________'}`, margin + 5, y);
             y += 7;
         }
         y += 8;
@@ -553,18 +549,18 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         // 4. Suggested Careers
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.text('3. Suggested Careers', margin, y);
+        doc.text('3. Recommended Career Tracks', margin, y);
         y += 10;
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
         const careers = recommendation?.pathway?.careers?.slice(0, 3) || [];
         for (let i = 0; i < 3; i++) {
-            doc.text(`${i + 1}. ${careers[i] || '________________________________________________'}`, margin, y);
+            doc.text(`${i + 1}. ${careers[i] || '________________________________________________'}`, margin + 5, y);
             y += 7;
         }
         y += 8;
 
-        if (y > doc.internal.pageSize.getHeight() - 100) {
+        if (y > doc.internal.pageSize.getHeight() - 150) {
             doc.addPage();
             y = margin;
         }
@@ -572,7 +568,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         // 5. MI Profile
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.text('4. Multiple Intelligence Profile (MI Scores)', margin, y);
+        doc.text('4. Your Passion, Ability, and Interest Profile (MI Scores)', margin, y);
         y += 10;
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
@@ -594,11 +590,10 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
             doc.text(`${item.label}: ${score} %`, margin, y);
             y += 7;
         });
-        y += 8;
+        y += 12;
 
-        // Helper for adding new sections with lines
-        const addSectionWithLine = (title: string, currentY: number) => {
-            if (currentY > doc.internal.pageSize.getHeight() - 40) {
+        const addAnalyzedSection = (title: string, text: string, currentY: number) => {
+             if (currentY > doc.internal.pageSize.getHeight() - 40) {
                 doc.addPage();
                 currentY = margin;
             }
@@ -608,15 +603,16 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
             currentY += 10;
             doc.setFontSize(12);
             doc.setFont('helvetica', 'normal');
-            doc.line(margin, currentY, pageWidth - margin, currentY);
-            currentY += 15;
+            const lines = doc.splitTextToSize(text, pageWidth - margin * 2);
+            doc.text(lines, margin, currentY);
+            currentY += lines.length * 7 + 8;
             return currentY;
         }
 
         // 6. Passion, Ability, Interest
-        y = addSectionWithLine('5. Passion', y);
-        y = addSectionWithLine('6. Ability', y);
-        y = addSectionWithLine('7. Interest', y);
+        y = addAnalyzedSection('5. Passion', passionText, y);
+        y = addAnalyzedSection('6. Ability', abilityText, y);
+        y = addAnalyzedSection('7. Interest', interestText, y);
 
         // Footer contact
         doc.setFontSize(10);
@@ -684,5 +680,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         </Card>
     );
 };
+
+    
 
     
