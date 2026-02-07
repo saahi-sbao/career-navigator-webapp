@@ -58,3 +58,27 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
   "method": "get",
   "path": "/databases/(default)/documents/feature_flags/storyGenerator"
 }
+[00:26:06.574] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:26:58.579] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[00:27:26.265] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:27:26.266] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/firebase/config.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:27:26.273] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:27:26.367] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:27:26.367] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/firebase/config.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:27:26.367] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:27:35.609] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}

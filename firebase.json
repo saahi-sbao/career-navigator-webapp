@@ -1,17 +1,15 @@
 {
-  "hosting": [
-    {
-      "target": "careernavigator",
-      "source": ".",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "frameworksBackend": {
-        "region": "us-central1"
-      },
-      "appAssociation": "AUTO"
-    }
-  ]
+  "hosting": {
+    "site": "careernavigator",
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    },
+    "appAssociation": "AUTO"
+  }
 }

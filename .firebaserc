@@ -1,14 +1,1 @@
-{
-  "projects": {
-    "default": "studio-1437981058-ade59"
-  },
-  "targets": {
-    "studio-1437981058-ade59": {
-      "hosting": {
-        "careernavigator": [
-          "studio-1437981058-ade59"
-        ]
-      }
-    }
-  }
-}
+{}
