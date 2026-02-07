@@ -9,17 +9,19 @@ runConfig:
 # Environment variables for the Build and Runtime
 env:
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    value: "AIzaSyAsATF8T6Vj8jNXfNFePfywTQpu1Gh01Bo"
+    value: "AIzaSyAK2zDR1VFT6Yg5zp6x9_a3eolYnlOjDUM"
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
     value: "studio-1437981058-ade59.firebaseapp.com"
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: "studio-1437981058-ade59"
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: "studio-1437981058-ade59.appspot.com"
+    value: "studio-1437981058-ade59.firebasestorage.app"
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     value: "251203676300"
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    value: "1:251203676300:web:f9aae4af2a4047839c33a9"
+    value: "1:251203676300:web:be5a23f3980560409c33a9"
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: "G-SJGL58SJL3"
 
 # This section enables specific Google Cloud integrations
 # google_maps_platform: {}
