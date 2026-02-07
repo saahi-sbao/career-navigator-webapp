@@ -82,3 +82,40 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
   "method": "get",
   "path": "/databases/(default)/documents/feature_flags/storyGenerator"
 }
+[01:22:45.611] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[01:22:47.646] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:22:48.889] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[01:24:52.001] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:24:53.608] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[01:25:38.327] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
+[01:26:38.862] Server  LOG     ✓ Finished filesystem cache database compaction in 11.6s
+[01:29:09.006] Server  LOG     ✓ Compiled in 1409ms
+[01:29:09.158] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[01:29:09.158] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./src/firebase/config.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[01:29:09.181] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[01:29:13.817] Browser ERROR   uncaughtError: FirebaseError: Missing or insufficient permissions: The following request was denied by Firestore Security Rules:
+{
+  "auth": null,
+  "method": "get",
+  "path": "/databases/(default)/documents/feature_flags/storyGenerator"
+}
