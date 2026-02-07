@@ -475,123 +475,140 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         const margin = 20;
         let y = margin;
         const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
 
-        const addPageBackground = () => {
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const pageWidth = doc.internal.pageSize.getWidth();
-
-            // A subtle, professional two-tone background.
-            // Top color - a very light, neutral blue-grey.
-            doc.setFillColor(249, 250, 251);
-            doc.rect(0, 0, pageWidth, pageHeight / 2, 'F');
-
-            // Bottom color - a very light, calming green.
-            doc.setFillColor(245, 253, 249);
-            doc.rect(0, pageHeight / 2, pageWidth, pageHeight / 2, 'F');
-        };
-
-        // Draw background on the first page
-        addPageBackground();
-        
-        const addTextAndCheckPage = (textArray: string[], x: number, spacing = 0) => {
-            textArray.forEach(line => {
-                if (y + 7 > doc.internal.pageSize.getHeight() - margin) {
-                    doc.addPage();
-                    addPageBackground(); // Add background to the new page
-                    y = margin;
-                }
-                doc.text(line, x, y);
-                y += 7 + spacing;
-            });
-        };
-
+        // 1. Title
         doc.setFontSize(22);
-        doc.setTextColor(44, 123, 229);
+        doc.setFont('helvetica', 'bold');
         doc.text('Career Guidance Report', pageWidth / 2, y, { align: 'center' });
-        y += 7;
-        doc.setFontSize(14);
-        doc.setTextColor(108, 117, 125);
-        doc.text('Kenya Competency-Based Education (CBE)', pageWidth / 2, y, { align: 'center' });
-        y += 14;
+        y += 15;
+        doc.setFont('helvetica', 'normal');
 
+        // 2. Student Information
         doc.setFontSize(16);
-        doc.setTextColor(0, 0, 128);
+        doc.setFont('helvetica', 'bold');
         doc.text('1. Student Information', margin, y);
-        doc.line(margin, y + 1, pageWidth - margin, y + 1);
-        y += 7;
-
+        y += 10;
         doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        addTextAndCheckPage([
-            `Name: ${info?.name || 'N/A'}`, `Age: ${info?.age || 'N/A'}`, `School: ${info?.school || 'N/A'}`,
-            `Grade: ${info?.grade || 'N/A'}`,
-            `Date: ${new Date(timestamp).toLocaleDateString()}`
-        ], margin);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Name: ${info?.name || '________________________________'}`, margin, y);
         y += 7;
+        doc.text(`Age: ${info?.age || '______'}`, margin, y);
+        y += 7;
+        doc.text(`School: ${info?.school || '________________________________'}`, margin, y);
+        y += 7;
+        doc.text(`Date: ${new Date(timestamp).toLocaleDateString()}`, margin, y);
+        y += 15;
 
+        // 3. Pathway Recommendation
         doc.setFontSize(16);
-        doc.setTextColor(0, 0, 128);
+        doc.setFont('helvetica', 'bold');
         doc.text('2. Pathway Recommendation', margin, y);
-        doc.line(margin, y + 1, pageWidth - margin, y + 1);
         y += 7;
-        
-        doc.setFontSize(14);
-        doc.setTextColor(44, 123, 229);
-        addTextAndCheckPage([`Recommended Career Pathway: ${recommendation?.pathway?.name || 'N/A'} Pathway`], margin);
-        
         doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        const safeSplit = (text: string, maxWidth: number) => doc.splitTextToSize(text, maxWidth);
-        addTextAndCheckPage(safeSplit(`Confidence Score: ${recommendation?.confidence || 0}%`, pageWidth - margin * 2), margin);
-        y += 3.5;
-        const electives = recommendation?.pathway?.subjects?.slice(0, 3).join(', ') || 'N/A';
-        addTextAndCheckPage(safeSplit(`Key Electives: ${electives}`, pageWidth - margin * 2), margin);
-        y += 14;
+        doc.setFont('helvetica', 'normal');
+        doc.text('Recommended Pathway:', margin, y);
+        
+        const pathwayOptions = {
+            'STEM': 'stem',
+            'Social Sciences': 'ss',
+            'Arts & Sports Science': 'ass'
+        };
 
-        doc.setFontSize(16);
-        doc.setTextColor(0, 0, 128);
-        doc.text('3. Your Passion, Ability, and Interest Profile (MI Scores)', margin, y);
-        doc.line(margin, y + 1, pageWidth - margin, y + 1);
-        y += 10.5;
-
-        doc.setFontSize(12);
-        sortedMiScores.forEach(([mi, score]) => {
-            if (y + 7 > doc.internal.pageSize.getHeight() - margin) {
-                doc.addPage();
-                addPageBackground();
-                y = margin;
+        let checkboxY = y + 7;
+        Object.entries(pathwayOptions).forEach(([name, id]) => {
+            const isSelected = recommendation?.pathway?.id === id;
+            doc.rect(margin, checkboxY - 4, 4, 4); // draw box
+            if (isSelected) {
+                doc.setFont('helvetica', 'bold');
+                doc.text('X', margin + 1, checkboxY - 3);
+                doc.setFont('helvetica', 'normal');
             }
-            const miDisplay = mi.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-            doc.text(`${miDisplay}:`, margin, y);
-            const barX = margin + 60;
-            const barWidth = 80;
-            const fillWidth = ((score || 0) / 100) * barWidth;
-            doc.setFillColor(230, 230, 230);
-            doc.rect(barX, y - 4, barWidth, 5, 'F');
-            doc.setFillColor(44, 123, 229);
-            doc.rect(barX, y - 4, fillWidth, 5, 'F');
-            doc.text(`${score || 0}%`, barX + barWidth + 5, y);
-            y += 7;
+            doc.text(name, margin + 6, checkboxY);
+            checkboxY += 7;
         });
-        y += 7;
+        y = checkboxY;
+        y += 5;
 
-        if (y > pageHeight - 50) {
+        doc.text(`Confidence Score: ${recommendation?.confidence || '____'} %`, margin, y);
+        y += 10;
+
+        doc.text('(3 electives Subjects):', margin, y);
+        y += 7;
+        const electives = recommendation?.pathway?.subjects?.slice(0, 3) || [];
+        for (let i = 0; i < 3; i++) {
+            doc.text(`${i + 1}. ${electives[i] || '________________________________'}`, margin, y);
+            y += 7;
+        }
+        y += 8;
+        
+        // 4. Suggested Careers
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('3. Suggested Careers', margin, y);
+        y += 10;
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        const careers = recommendation?.pathway?.careers?.slice(0, 3) || [];
+        for (let i = 0; i < 3; i++) {
+            doc.text(`${i + 1}. ${careers[i] || '________________________________________________'}`, margin, y);
+            y += 7;
+        }
+        y += 8;
+
+        if (y > doc.internal.pageSize.getHeight() - 100) {
             doc.addPage();
-            addPageBackground();
             y = margin;
         }
-        doc.setFontSize(16);
-        doc.setTextColor(0, 0, 128);
-        doc.text('4. Recommended Career Tracks', margin, y);
-        doc.line(margin, y + 1, pageWidth - margin, y + 1);
-        y += 7;
 
+        // 5. MI Profile
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('4. Multiple Intelligence Profile (MI Scores)', margin, y);
+        y += 10;
         doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        const careersText = recommendation?.pathway?.careers?.join(', ') || 'N/A';
-        addTextAndCheckPage(safeSplit(careersText, pageWidth - margin * 2), margin, 2);
+        doc.setFont('helvetica', 'normal');
         
+        const miProfileOrder = [
+            { label: 'Linguistic', key: 'linguistic' },
+            { label: 'Logical-Mathematical', key: 'logicalMathematical' },
+            { label: 'Spatial', key: 'spatial' },
+            { label: 'Bodily-Kinesthetic', key: 'bodilyKinesthetic' },
+            { label: 'Musical', key: 'musical' },
+            { label: 'Interpersonal', key: 'interpersonal' },
+            { label: 'Intrapersonal', key: 'intrapersonal' },
+            { label: 'Naturalist', key: 'naturalist' }
+        ];
+
+        miProfileOrder.forEach(item => {
+            const score = miScores[item.key as keyof typeof miScores] ?? '____';
+            doc.text(`${item.label}: ${score} %`, margin, y);
+            y += 7;
+        });
+        y += 8;
+
+        // Helper for adding new sections with lines
+        const addSectionWithLine = (title: string, currentY: number) => {
+            if (currentY > doc.internal.pageSize.getHeight() - 40) {
+                doc.addPage();
+                currentY = margin;
+            }
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text(title, margin, currentY);
+            currentY += 10;
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.line(margin, currentY, pageWidth - margin, currentY);
+            currentY += 15;
+            return currentY;
+        }
+
+        // 6. Passion, Ability, Interest
+        y = addSectionWithLine('5. Passion', y);
+        y = addSectionWithLine('6. Ability', y);
+        y = addSectionWithLine('7. Interest', y);
+
+        // Footer contact
         doc.setFontSize(10);
         doc.setTextColor(139, 0, 0);
         doc.text('Contact us through our number for more guidance +254117448455', margin, doc.internal.pageSize.getHeight() - margin);
@@ -621,11 +638,11 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                      <p className="mt-4 text-muted-foreground">{recommendation?.pathway?.description}.</p>
 
                      <div className="mt-4">
-                        <h4 className="font-semibold">Essential Subjects:</h4>
-                        <p className="text-muted-foreground">{recommendation?.pathway?.subjects?.join(', ') || 'N/A'}</p>
+                        <h4 className="font-semibold">Key Electives:</h4>
+                        <p className="text-muted-foreground">{recommendation?.pathway?.subjects?.slice(0, 3).join(', ') || 'N/A'}</p>
                      </div>
                      <div className="mt-4">
-                        <h4 className="font-semibold">Suggested Careers:</h4>
+                        <h4 className="font-semibold">Recommended Career Tracks:</h4>
                         <div className="flex flex-wrap gap-2 mt-2">
                             {recommendation?.pathway?.careers?.map(c => <span key={c} className="bg-primary/20 text-primary font-medium px-3 py-1 rounded-full text-sm">{c}</span>)}
                         </div>
@@ -633,7 +650,7 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
                 </div>
 
                 <div>
-                    <h3 className="text-2xl font-bold mb-4">Your Multiple Intelligence Profile</h3>
+                    <h3 className="text-2xl font-bold mb-4">Your Passion, Ability, and Interest Profile (MI Scores)</h3>
                     <div className="space-y-4">
                         {sortedMiScores.map(([mi, score]) => {
                             const miDisplay = mi.replace(/([A-Z])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase());
@@ -658,3 +675,5 @@ const ResultsPage = ({ results, onRestart }: { results: AssessmentResults, onRes
         </Card>
     );
 };
+
+    
