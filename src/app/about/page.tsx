@@ -5,7 +5,7 @@ import { CheckCircle2 } from 'lucide-react';
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-secondary/20">
+    <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-12">
         <Card>

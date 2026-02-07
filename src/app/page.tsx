@@ -100,7 +100,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-16 md:py-24 bg-secondary/50">
+        <section id="features" className="py-16 md:py-24 bg-secondary">
             <div className="container">
                 <div className="text-center max-w-2xl mx-auto mb-12">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">Why Choose Career Navigator?</h2>
@@ -158,7 +158,7 @@ export default function Home() {
         {/* Career Fields Section */}
         <section
           id="career-fields"
-          className="container space-y-6 bg-slate-50/50 dark:bg-transparent py-8 md:py-12 lg:py-24 rounded-t-2xl"
+          className="container space-y-6 py-8 md:py-12 lg:py-24"
         >
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl leading-[1.1] sm:text-3xl md:text-5xl font-bold">
@@ -173,7 +173,7 @@ export default function Home() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="py-16 md:py-24 bg-secondary/50">
+        <section id="faq" className="py-16 md:py-24 bg-secondary">
             <div className="container max-w-4xl">
                  <div className="text-center max-w-2xl mx-auto mb-12">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">Frequently Asked Questions</h2>
